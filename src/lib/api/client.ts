@@ -243,7 +243,7 @@ export async function getVendorProduct(productId: string, languageCode: string =
     }
 
     // Deduplicate
-    const uniqueLanguages = Array.from(new Map(availableLanguages.map(item => [item.code, item])).values());
+    const uniqueLanguages = Array.from(new Map(availableLanguages.map((item: any) => [item.code, item])).values());
 
     // MERGE TRANSLATION
     // If a translation exists for this language, override name/description
