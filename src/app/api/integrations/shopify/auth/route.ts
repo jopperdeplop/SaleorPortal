@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     // But for the user request, we keep it prod-ready or use env var.
     // Let's use an env var for the host to make it compatible with localhost
 
-    const host = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const callbackUrl = `${host}/api/integrations/shopify/callback`;
 
     const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?client_id=${client_id}&scope=${scopes}&redirect_uri=${callbackUrl}`; // &state=nonce
