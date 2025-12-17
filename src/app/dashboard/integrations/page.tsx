@@ -4,6 +4,8 @@ import { eq } from 'drizzle-orm';
 // import { auth } from '@/auth'; // Assuming auth
 import Link from 'next/link';
 
+import DisconnectButton from './disconnect-button';
+
 export default async function IntegrationsPage() {
     // const session = await auth();
     // const userId = session?.user?.id;
@@ -38,15 +40,7 @@ export default async function IntegrationsPage() {
                                         <p className="text-sm text-gray-500">Connected to: {shopifyInt.storeUrl}</p>
                                         <p className="text-xs text-gray-400 mt-1">Last sync: Just now</p>
                                     </div>
-                                    <form action={async () => {
-                                        'use server';
-                                        const { disconnectShopify } = await import('@/app/actions/integrations');
-                                        await disconnectShopify(shopifyInt.id);
-                                    }}>
-                                        <button className="text-xs text-red-500 hover:text-red-700 hover:underline">
-                                            Disconnect
-                                        </button>
-                                    </form>
+                                    <DisconnectButton integrationId={shopifyInt.id} />
                                 </div>
                                 <div className="mt-4">
                                     <form action={async () => {
