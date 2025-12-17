@@ -35,13 +35,13 @@ export default function SyncButton({ integrationId }: SyncButtonProps) {
     };
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 items-start">
             <button
                 onClick={handleSync}
                 disabled={isPending || status === 'running'}
                 className={`inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all ${isPending || status === 'running'
-                        ? 'bg-indigo-300 cursor-not-allowed text-white'
-                        : 'text-indigo-700 bg-indigo-100 hover:bg-indigo-200'
+                    ? 'bg-indigo-300 cursor-not-allowed text-white'
+                    : 'text-indigo-700 bg-indigo-100 hover:bg-indigo-200'
                     }`}
             >
                 {isPending || status === 'running' ? (
