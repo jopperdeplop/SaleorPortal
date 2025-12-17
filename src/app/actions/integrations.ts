@@ -10,7 +10,7 @@ export async function triggerShopifySync(integrationId: number) {
     try {
         console.log(`Triggering Sync for Integration: ${integrationId}`);
 
-        const handle = await tasks.trigger("import-shopify-products", {
+        const handle = await tasks.trigger("shopify-product-sync", {
             integrationId: integrationId,
             dryRun: false
         });
