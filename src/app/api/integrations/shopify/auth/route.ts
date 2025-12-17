@@ -33,15 +33,9 @@ export async function GET(request: Request) {
     const host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const callbackUrl = `${host}/api/integrations/shopify/callback`;
 
-    const params = new URLSearchParams({
-        client_id: client_id!,
-        scope: scopes,
-        redirect_uri: callbackUrl,
-        state: 'nonce',
-        access_mode: 'offline' // Explicitly request offline access token (long-lived)
-    });
-
-    const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?${params.toString()}`;
+    // We use manual string construction here to ensure the scope list is comma-separated 
+    // and preserved exactly as Shopify expects, minimizing encoding issues.
+    const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?client_id=${client_id}&scope=${scopes}&redirect_uri=${callbackUrl}&state=nonce&access_mode=offline&prompt=consent`;
 
     console.log("Redirecting to Shopify OAuth:", installUrl);
     redirect(installUrl);
