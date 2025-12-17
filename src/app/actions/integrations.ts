@@ -35,3 +35,14 @@ export async function mockConnect() {
     });
     revalidatePath('/dashboard/integrations');
 }
+
+export async function disconnectShopify(integrationId: number) {
+    try {
+        await db.delete(integrations).where(eq(integrations.id, integrationId));
+        revalidatePath('/dashboard/integrations');
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to disconnect:", error);
+        return { success: false, error: "Failed to disconnect" };
+    }
+}
