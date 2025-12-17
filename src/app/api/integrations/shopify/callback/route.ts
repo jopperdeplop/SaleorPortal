@@ -11,8 +11,8 @@ export async function GET(request: Request) {
         return new Response('Missing code or shop parameter', { status: 400 });
     }
 
-    const client_id = process.env.SHOPIFY_API_KEY;
-    const client_secret = process.env.SHOPIFY_API_SECRET;
+    const client_id = process.env.SHOPIFY_CLIENT_ID;
+    const client_secret = process.env.SHOPIFY_CLIENT_SECRET;
 
     // Exchange code for access token
     const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
