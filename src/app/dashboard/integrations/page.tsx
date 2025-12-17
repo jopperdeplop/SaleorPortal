@@ -33,8 +33,21 @@ export default async function IntegrationsPage() {
                     <div className="px-4 py-5 sm:p-6">
                         {shopifyInt ? (
                             <div>
-                                <p className="text-sm text-gray-500">Connected to: {shopifyInt.storeUrl}</p>
-                                <p className="text-xs text-gray-400 mt-1">Last sync: Just now</p>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500">Connected to: {shopifyInt.storeUrl}</p>
+                                        <p className="text-xs text-gray-400 mt-1">Last sync: Just now</p>
+                                    </div>
+                                    <form action={async () => {
+                                        'use server';
+                                        const { disconnectShopify } = await import('@/app/actions/integrations');
+                                        await disconnectShopify(shopifyInt.id);
+                                    }}>
+                                        <button className="text-xs text-red-500 hover:text-red-700 hover:underline">
+                                            Disconnect
+                                        </button>
+                                    </form>
+                                </div>
                                 <div className="mt-4">
                                     <form action={async () => {
                                         'use server';
