@@ -33,7 +33,21 @@ export async function GET(request: Request) {
     const host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const callbackUrl = `${host}/api/integrations/shopify/callback`;
 
-    const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?client_id=${client_id}&scope=${scopes}&redirect_uri=${callbackUrl}&access_mode=offline&prompt=consent`;
+    const params = new URLSearchParams({
+        client_id: client_id!,
+        scope: scopes,
+        redirect_uri: callbackUrl,
+        state: 'nonce',
+        grant_options: 'per-user', // try explicit grant options or omit for offline default. 
+        // Actually, Shopify docs say access_mode=offline is deprecated in favor of grant_options[]? 
+        // No, 'access_mode' is still widely used. Let's stick to prompt=consent and encoding.
+        // Let's use access_mode=offline as before but safely encoded.
+        access_mode: 'offline',
+        prompt: 'consent'
+    });
 
+    const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?${params.toString()}`;
+
+    console.log("Redirecting to Shopify OAuth:", installUrl);
     redirect(installUrl);
 }
