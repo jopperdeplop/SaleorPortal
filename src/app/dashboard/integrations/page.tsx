@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 
 import DisconnectButton from './disconnect-button';
+import SyncButton from './sync-button';
 
 export default async function IntegrationsPage() {
     // const session = await auth();
@@ -43,15 +44,7 @@ export default async function IntegrationsPage() {
                                     <DisconnectButton integrationId={shopifyInt.id} />
                                 </div>
                                 <div className="mt-4">
-                                    <form action={async () => {
-                                        'use server';
-                                        const { triggerShopifySync } = await import('@/app/actions/integrations');
-                                        await triggerShopifySync(shopifyInt.id);
-                                    }}>
-                                        <button type="submit" className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                            Sync Products Now
-                                        </button>
-                                    </form>
+                                    <SyncButton integrationId={shopifyInt.id} />
                                 </div>
                             </div>
                         ) : (
