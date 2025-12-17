@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     const host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const callbackUrl = `${host}/api/integrations/shopify/callback`;
 
-    const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?client_id=${client_id}&scope=${scopes}&redirect_uri=${callbackUrl}`; // &state=nonce
+    const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?client_id=${client_id}&scope=${scopes}&redirect_uri=${callbackUrl}&access_mode=offline&prompt=consent`;
 
     redirect(installUrl);
 }
