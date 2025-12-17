@@ -38,12 +38,7 @@ export async function GET(request: Request) {
         scope: scopes,
         redirect_uri: callbackUrl,
         state: 'nonce',
-        grant_options: 'per-user', // try explicit grant options or omit for offline default. 
-        // Actually, Shopify docs say access_mode=offline is deprecated in favor of grant_options[]? 
-        // No, 'access_mode' is still widely used. Let's stick to prompt=consent and encoding.
-        // Let's use access_mode=offline as before but safely encoded.
-        access_mode: 'offline',
-        prompt: 'consent'
+        access_mode: 'offline' // Explicitly request offline access token (long-lived)
     });
 
     const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?${params.toString()}`;
