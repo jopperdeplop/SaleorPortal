@@ -37,19 +37,6 @@ export async function GET(request: Request) {
     // and preserved exactly as Shopify expects, minimizing encoding issues.
     const installUrl = `https://${sanitizedShop}/admin/oauth/authorize?client_id=${client_id}&scope=${scopes}&redirect_uri=${callbackUrl}&state=nonce&access_mode=offline&prompt=consent`;
 
-    // DEBUG: Return a manual link to inspect the URL
-    return new Response(
-        `<html><body>
-            <h1>Debug OAuth Link</h1>
-            <p>Click the link below to install. Hover to inspect the URL parameters.</p>
-            <p><strong>Scopes:</strong> ${scopes}</p>
-            <a href="${installUrl}" style="font-size: 20px; padding: 10px; background: #eee; display: block; word-break: break-all;">
-                ${installUrl}
-            </a>
-         </body></html>`,
-        {
-            status: 200,
-            headers: { 'Content-Type': 'text/html' }
-        }
-    );
+    console.log("Redirecting to Shopify OAuth:", installUrl);
+    redirect(installUrl);
 }
