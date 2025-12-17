@@ -1,0 +1,93 @@
+import { db } from '@/db';
+import { users } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { updateShopSettings } from '@/app/actions/settings';
+// import { auth } from '@/auth';
+
+export default async function SettingsPage() {
+    // const session = await auth();
+    const userId = 1;
+    const user = await db.query.users.findFirst({
+        where: eq(users.id, userId)
+    });
+
+    if (!user) return <div>User not found</div>;
+
+    const address = user.warehouseAddress as any || {};
+
+    return (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 className="text-2xl font-bold text-gray-900 mb-6">Shop Settings</h1>
+
+            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                    <form action={updateShopSettings} className="space-y-6">
+
+                        <div>
+                            <h3 className="text-lg leading-6 font-medium text-gray-900">Legal & Tax</h3>
+                            <div className="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                <div className="sm:col-span-3">
+                                    <label htmlFor="vatNumber" className="block text-sm font-medium text-gray-700">VAT Number</label>
+                                    <div className="mt-1">
+                                        <input type="text" name="vatNumber" id="vatNumber" defaultValue={user.vatNumber || ''} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-gray-200">
+                            <h3 className="text-lg leading-6 font-medium text-gray-900">Warehouse Origin</h3>
+                            <p className="mt-1 text-sm text-gray-500">This address is used to calculate shipping rates.</p>
+
+                            <div className="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                <div className="sm:col-span-6">
+                                    <label htmlFor="street" className="block text-sm font-medium text-gray-700">Street address</label>
+                                    <div className="mt-1">
+                                        <input type="text" name="street" id="street" defaultValue={address.street || ''} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                    </div>
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
+                                    <div className="mt-1">
+                                        <input type="text" name="city" id="city" defaultValue={address.city || ''} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                    </div>
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <label htmlFor="zip" className="block text-sm font-medium text-gray-700">ZIP / Postal code</label>
+                                    <div className="mt-1">
+                                        <input type="text" name="zip" id="zip" defaultValue={address.zip || ''} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                    </div>
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
+                                    <div className="mt-1">
+                                        <select id="country" name="country" defaultValue={address.country || 'FR'} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                                            <option value="FR">France</option>
+                                            <option value="DE">Germany</option>
+                                            <option value="IT">Italy</option>
+                                            <option value="ES">Spain</option>
+                                            <option value="NL">Netherlands</option>
+                                            <option value="PL">Poland</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-5 border-t border-gray-200">
+                            <div className="flex justify-end">
+                                <button type="submit" className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Save Settings
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+}
