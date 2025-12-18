@@ -45,16 +45,37 @@ export async function GET(request: Request) {
     const userId = 1;
 
     // Save to DB
-    await db.insert(integrations).values({
+    const [newIntegration] = await db.insert(integrations).values({
         userId,
         provider: 'shopify',
         storeUrl: shop,
         accessToken: accessToken,
         status: 'active',
-    });
+    }).returning();
 
-    // TODO: Trigger Initial Sync (Phase 4)
-    // await tasks.trigger("import-shopify-products", { integrationId: ... });
+    // --- PHASE 4: Register Real-time Inventory Webhook ---
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+
+    try {
+        console.log(`📡 Registering Inventory Webhook for ${shop}...`);
+        await fetch(`https://${shop}/admin/api/2024-04/webhooks.json`, {
+            method: 'POST',
+            headers: {
+                'X-Shopify-Access-Token': accessToken,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                webhook: {
+                    topic: 'inventory_levels/update',
+                    address: `${appUrl}/api/webhooks/shopify/inventory`,
+                    format: 'json',
+                }
+            }),
+        });
+        console.log(`✅ Inventory Webhook Registered at ${appUrl}/api/webhooks/shopify/inventory`);
+    } catch (e) {
+        console.error("❌ Failed to register Shopify webhook:", e);
+    }
 
     redirect('/dashboard/integrations?success=true');
 }
