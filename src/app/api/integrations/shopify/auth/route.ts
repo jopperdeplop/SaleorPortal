@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const sanitizedShop = shop.includes('.myshopify.com') ? shop : `${shop}.myshopify.com`;
 
     const client_id = process.env.SHOPIFY_CLIENT_ID;
-    const scopes = 'read_products,write_orders,read_inventory,write_fulfillments';
+    const scopes = 'read_products,write_orders,read_inventory,write_fulfillments,read_customers,read_shipping';
     const redirect_uri = 'https://partner.salp.shop/api/integrations/shopify/callback';
     // NOTE: For localhost, this MUST be updated in Shopify Partner Dashboard to 'http://localhost:3000/...' 
     // But for the user request, we keep it prod-ready or use env var.
