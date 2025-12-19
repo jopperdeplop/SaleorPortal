@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     const scope = 'read_write';
     const userId = session.user.id;
     const returnUrl = `${host}/dashboard/integrations?success=true`;
-    const callbackUrl = `${host}/api/integrations/woocommerce/callback`;
+    const callbackUrl = `${host}/api/integrations/woocommerce/callback?shop=${encodeURIComponent(sanitizedShop)}`;
 
     // Construct WooCommerce Auth URL
     // Documentation: https://woocommerce.github.io/woocommerce-rest-api-docs/#introduction

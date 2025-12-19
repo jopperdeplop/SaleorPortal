@@ -55,7 +55,16 @@ export async function POST(request: Request) {
             return new Response('Invalid user_id', { status: 400 });
         }
 
-        const cleanStoreUrl = (store_url || '').replace(/\/$/, "");
+        const url = new URL(request.url);
+        const shopFromUrl = url.searchParams.get('shop');
+
+        let finalStoreUrl = store_url || shopFromUrl || '';
+        const cleanStoreUrl = finalStoreUrl.replace(/\/$/, "");
+
+        if (!cleanStoreUrl) {
+            console.error("❌ Could not determine store_url from payload or query params");
+            return new Response('Missing store_url', { status: 400 });
+        }
 
         const [newIntegration] = await db.insert(integrations).values({
             userId: userIdInt,
