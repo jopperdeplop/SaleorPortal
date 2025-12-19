@@ -2,10 +2,27 @@ import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { encrypt } from '@/lib/encryption';
 
+// Debug GET handler to verify the route is accessible
+export async function GET(request: Request) {
+    return new Response('WooCommerce Callback Endpoint - Use POST for data exchange.', { status: 200 });
+}
+
 export async function POST(request: Request) {
+    console.log("📥 WooCommerce Callback Request Received");
+
     try {
-        const payload = await request.json();
-        console.log("📥 WooCommerce Callback Payload Received:", JSON.stringify(payload, null, 2));
+        const contentType = request.headers.get('content-type') || '';
+        let payload: any;
+
+        if (contentType.includes('application/json')) {
+            payload = await request.json();
+        } else {
+            // Handle form-encoded just in case
+            const formData = await request.formData();
+            payload = Object.fromEntries(formData.entries());
+        }
+
+        console.log("📥 WooCommerce Payload:", JSON.stringify(payload, null, 2));
 
         const {
             user_id,
@@ -16,7 +33,7 @@ export async function POST(request: Request) {
         } = payload;
 
         if (!consumer_key || !consumer_secret || !store_url) {
-            console.error("❌ Missing required fields in WooCommerce payload");
+            console.error("❌ Missing required fields in WooCommerce payload. Fields received:", Object.keys(payload));
             return new Response('Missing required fields', { status: 400 });
         }
 
@@ -24,13 +41,18 @@ export async function POST(request: Request) {
         const encryptedSecret = encrypt(consumer_secret);
 
         // --- Database: Save Integration ---
-        const userId = parseInt(user_id);
+        // user_id comes from our 'auth' route's userId parameter passed to WC
+        const userIdInt = parseInt(user_id);
+        if (isNaN(userIdInt)) {
+            console.error("❌ Invalid user_id received:", user_id);
+            return new Response('Invalid user_id', { status: 400 });
+        }
 
         const [newIntegration] = await db.insert(integrations).values({
-            userId: userId,
+            userId: userIdInt,
             provider: 'woocommerce',
             storeUrl: store_url.replace(/\/$/, ""),
-            accessToken: consumer_key, // We store key here, secret in settings
+            accessToken: consumer_key,
             status: 'active',
             settings: {
                 consumerSecret: encryptedSecret,
@@ -42,12 +64,9 @@ export async function POST(request: Request) {
 
         console.log(`✅ WooCommerce Integration Saved for ${store_url} (ID: ${newIntegration.id})`);
 
-        // --- PHASE 4: Register Webhooks (Async or Triggered later) ---
-        // For now, we return 200 to WooCommerce to confirm receipt.
-
         return new Response('OK', { status: 200 });
-    } catch (error) {
-        console.error("❌ WooCommerce Callback Error:", error);
-        return new Response('Internal Server Error', { status: 500 });
+    } catch (error: any) {
+        console.error("❌ WooCommerce Callback Error:", error.message || error);
+        return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
     }
 }
