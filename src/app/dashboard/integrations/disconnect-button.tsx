@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { disconnectShopify } from '@/app/actions/integrations';
+import { disconnectIntegration } from '@/app/actions/integrations';
 
 interface DisconnectButtonProps {
     integrationId: number;
@@ -17,7 +17,7 @@ export default function DisconnectButton({ integrationId }: DisconnectButtonProp
 
         setLoading(true);
         try {
-            await disconnectShopify(integrationId);
+            await disconnectIntegration(integrationId);
         } catch (error) {
             console.error("Failed to disconnect:", error);
             alert("Failed to disconnect. Please try again.");

@@ -48,7 +48,7 @@ export default async function IntegrationsPage() {
                                     <DisconnectButton integrationId={shopifyInt.id} />
                                 </div>
                                 <div className="mt-4">
-                                    <SyncButton integrationId={shopifyInt.id} />
+                                    <SyncButton integrationId={shopifyInt.id} provider="shopify" />
                                 </div>
                             </div>
                         ) : (
@@ -71,17 +71,6 @@ export default async function IntegrationsPage() {
                                         </button>
                                     </div>
                                 </form>
-                                <div className="mt-4 border-t pt-4">
-                                    <form action={async () => {
-                                        'use server';
-                                        const { mockConnect } = await import('@/app/actions/integrations');
-                                        await mockConnect();
-                                    }}>
-                                        <button className="text-xs text-gray-500 underline hover:text-indigo-600">
-                                            (Dev) Mock Connect
-                                        </button>
-                                    </form>
-                                </div>
                             </div>
                         )}
                     </div>
@@ -103,7 +92,7 @@ export default async function IntegrationsPage() {
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm text-gray-500">Connected to: {userIntegrations.find(i => i.provider === 'woocommerce')?.storeUrl}</p>
-                                        <SyncButton integrationId={userIntegrations.find(i => i.provider === 'woocommerce')!.id} />
+                                        <SyncButton integrationId={userIntegrations.find(i => i.provider === 'woocommerce')!.id} provider="woocommerce" />
                                     </div>
                                     <DisconnectButton integrationId={userIntegrations.find(i => i.provider === 'woocommerce')!.id} />
                                 </div>

@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { triggerShopifySync } from '@/app/actions/integrations';
+import { triggerIntegrationSync } from '@/app/actions/integrations';
 
 interface SyncButtonProps {
     integrationId: number;
+    provider: string;
 }
 
-export default function SyncButton({ integrationId }: SyncButtonProps) {
+export default function SyncButton({ integrationId, provider }: SyncButtonProps) {
     const [isPending, startTransition] = useTransition();
     const [message, setMessage] = useState<string | null>(null);
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle');
@@ -17,7 +18,7 @@ export default function SyncButton({ integrationId }: SyncButtonProps) {
         setStatus('running');
 
         startTransition(async () => {
-            const result = await triggerShopifySync(integrationId);
+            const result = await triggerIntegrationSync(integrationId, provider);
 
             if (result.success) {
                 setStatus('success');
