@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { redirect } from 'next/navigation';
+import { encrypt } from '@/lib/encryption';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -44,38 +45,61 @@ export async function GET(request: Request) {
     // MOCK: Assuming User 1 for now as per plan
     const userId = 1;
 
-    // Save to DB
+    // --- PHASE 3: Save to DB ---
+    // In Shopify, the Client Secret is the secret used for HMAC verification of webhooks.
+    const encryptedSecret = encrypt(client_secret!);
+
     const [newIntegration] = await db.insert(integrations).values({
         userId,
         provider: 'shopify',
         storeUrl: shop,
         accessToken: accessToken,
         status: 'active',
+        settings: {
+            webhookSecret: encryptedSecret,
+            sync_inventory: true
+        }
     }).returning();
 
-    // --- PHASE 4: Register Real-time Inventory Webhook ---
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+    // --- PHASE 4: Register Webhooks ---
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
-    try {
-        console.log(`📡 Registering Inventory Webhook for ${shop}...`);
-        await fetch(`https://${shop}/admin/api/2024-04/webhooks.json`, {
-            method: 'POST',
-            headers: {
-                'X-Shopify-Access-Token': accessToken,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                webhook: {
-                    topic: 'inventory_levels/update',
-                    address: `${appUrl}/api/webhooks/shopify/inventory`,
-                    format: 'json',
-                }
-            }),
-        });
-        console.log(`✅ Inventory Webhook Registered at ${appUrl}/api/webhooks/shopify/inventory`);
-    } catch (e) {
-        console.error("❌ Failed to register Shopify webhook:", e);
-    }
+    // The fulfillment webhook is handled by the 'saleor-app-template' project.
+    // We use a dedicated env var for this URL.
+    const fulfillmentWebhookUrl = process.env.SHOPIFY_FULFILLMENT_WEBHOOK_URL || `${appUrl}/api/webhooks/shopify-fulfillment`;
+
+    console.log(`📡 Registering Webhooks for ${shop}...`);
+
+    const registerWebhooks = async () => {
+        const topics = [
+            { topic: 'inventory_levels/update', address: `${appUrl}/api/webhooks/shopify/inventory` },
+            { topic: 'fulfillments/create', address: fulfillmentWebhookUrl }
+        ];
+
+        for (const item of topics) {
+            try {
+                await fetch(`https://${shop}/admin/api/2024-04/webhooks.json`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Shopify-Access-Token': accessToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        webhook: {
+                            topic: item.topic,
+                            address: item.address,
+                            format: 'json',
+                        }
+                    }),
+                });
+                console.log(`✅ Webhook [${item.topic}] Registered at ${item.address}`);
+            } catch (e) {
+                console.error(`❌ Failed to register Shopify webhook [${item.topic}]:`, e);
+            }
+        }
+    };
+
+    await registerWebhooks();
 
     redirect('/dashboard/integrations?success=true');
 }
