@@ -145,15 +145,6 @@ export default async function IntegrationsPage() {
                                     </div>
                                     <DisconnectButton integrationId={lightspeedInt.id} />
                                 </div>
-                                {lightspeedInt.settings && (lightspeedInt.settings as any).webhookSecret && (
-                                    <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-200">
-                                        <p className="text-xs font-semibold text-blue-800 uppercase tracking-wide">Webhook Security</p>
-                                        <p className="text-xs text-blue-600 mt-1">Use this secret in your Lightspeed webhook URL:</p>
-                                        <code className="text-xs font-mono bg-white p-1 rounded border mt-1 block break-all">
-                                            {decrypt((lightspeedInt.settings as any).webhookSecret)}
-                                        </code>
-                                    </div>
-                                )}
                             </div>
                         ) : (
                             <div>

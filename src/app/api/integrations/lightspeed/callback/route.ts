@@ -79,6 +79,30 @@ export async function GET(request: Request) {
             }
         });
 
+        // --- AUTOMATION: Register Webhooks ---
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+        const webhookUrl = `https://saleor-app-template.vercel.app/api/webhooks/lightspeed-fulfillment?secret=${webhookSecret}`;
+
+        console.info(`📡 Registering Lightspeed Webhooks for ${domainPrefix}...`);
+
+        try {
+            await fetch(`https://${domainPrefix}.retail.lightspeed.app/api/webhooks`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${tokenData.access_token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    active: true,
+                    type: 'sale.update',
+                    url: webhookUrl
+                }),
+            });
+            console.info(`✅ Webhook [sale.update] Registered at ${webhookUrl}`);
+        } catch (e) {
+            console.error(`❌ Failed to register Lightspeed webhook:`, e);
+        }
+
         success = true;
     } catch (error: any) {
         console.error('❌ [Lightspeed Callback] Fatal Error:', error);
