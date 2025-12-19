@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { db } from "@/db";
 import { integrations } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { encrypt } from "@/lib/encryption";
 
 export async function triggerShopifySync(integrationId: number) {
     try {
@@ -26,13 +27,19 @@ export async function triggerShopifySync(integrationId: number) {
 
 export async function mockConnect() {
     // Only allow if no active integration exists for this mock user
-    // (Optional check, but safe)
+    const webhookSecret = "mock_shopify_secret_123"; // In reality, this comes from Shopify App Setup
+    const encryptedSecret = encrypt(webhookSecret);
+
     await db.insert(integrations).values({
         userId: 1, // Mock user
         provider: "shopify",
         storeUrl: "test-store.myshopify.com",
         accessToken: "mock_token_123",
-        status: "active"
+        status: "active",
+        settings: {
+            webhookSecret: encryptedSecret,
+            sync_inventory: true
+        }
     });
     revalidatePath('/dashboard/integrations');
 }
