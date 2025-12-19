@@ -83,13 +83,49 @@ export default async function IntegrationsPage() {
                     </div>
                 </div>
 
-                {/* WooCommerce Card (Placeholder) */}
-                <div className="bg-white overflow-hidden shadow rounded-lg opacity-60">
-                    <div className="px-4 py-5 sm:px-6">
-                        <h3 className="text-lg leading-6 font-medium text-gray-900">WooCommerce</h3>
+                {/* WooCommerce Card */}
+                <div className="bg-white overflow-hidden shadow rounded-lg divide-y divide-gray-200">
+                    <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
+                        <div className="flex items-center">
+                            <h3 className="text-lg leading-6 font-medium text-gray-900">WooCommerce</h3>
+                        </div>
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${userIntegrations.find(i => i.provider === 'woocommerce') ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                            {userIntegrations.find(i => i.provider === 'woocommerce') ? 'Connected' : 'Not Connected'}
+                        </span>
                     </div>
                     <div className="px-4 py-5 sm:p-6">
-                        <p className="text-sm text-gray-500">Coming Soon</p>
+                        {userIntegrations.find(i => i.provider === 'woocommerce') ? (
+                            <div>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500">Connected to: {userIntegrations.find(i => i.provider === 'woocommerce')?.storeUrl}</p>
+                                        <SyncButton integrationId={userIntegrations.find(i => i.provider === 'woocommerce')!.id} />
+                                    </div>
+                                    <DisconnectButton integrationId={userIntegrations.find(i => i.provider === 'woocommerce')!.id} />
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="text-sm text-gray-500 mb-4">
+                                    Connect your WooCommerce store to automatically sync products and inventory.
+                                </p>
+                                <form action="/api/integrations/woocommerce/auth" method="GET">
+                                    <label htmlFor="shop" className="block text-sm font-medium text-gray-700 mb-1">Store URL</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            name="shop"
+                                            placeholder="https://example-shop.com"
+                                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                                            required
+                                        />
+                                        <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                                            Connect
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
