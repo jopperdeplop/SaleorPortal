@@ -69,6 +69,8 @@ export async function GET(request: Request) {
     const fulfillmentWebhookUrl = process.env.SHOPIFY_FULFILLMENT_WEBHOOK_URL || `${appUrl}/api/webhooks/shopify-fulfillment`;
 
     console.log(`📡 Registering Webhooks for ${shop}...`);
+    console.log(`   🏠 appUrl: ${appUrl}`);
+    console.log(`   🚚 fulfillmentWebhookUrl: ${fulfillmentWebhookUrl}`);
 
     const registerWebhooks = async () => {
         const topics = [
