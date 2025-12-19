@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     const host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const callbackUrl = `${host}/api/integrations/lightspeed/callback`;
-    const state = 'nonce'; // In a real app, this should be a secure random value stored in session
+    const state = domainPrefix; // Pass domainPrefix in state to recover it in the callback
 
     // Lightspeed X-Series OAuth Authorization URL
     // Format: https://{domain_prefix}.retail.lightspeed.app/connect?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}&state={state}

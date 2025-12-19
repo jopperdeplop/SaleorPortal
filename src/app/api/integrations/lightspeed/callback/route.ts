@@ -9,11 +9,13 @@ import crypto from 'crypto';
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
-    const domainPrefix = searchParams.get('domain_prefix'); // Lightspeed sends this back
+    const state = searchParams.get('state'); // We passed domainPrefix here
 
-    if (!code || !domainPrefix) {
-        return new Response('Missing code or domain_prefix parameter', { status: 400 });
+    if (!code || !state) {
+        return new Response('Missing code or state parameter', { status: 400 });
     }
+
+    const domainPrefix = state;
 
     const clientId = process.env.LIGHTSPEED_CLIENT_ID;
     const clientSecret = process.env.LIGHTSPEED_CLIENT_SECRET;
