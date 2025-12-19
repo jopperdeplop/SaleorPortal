@@ -21,7 +21,12 @@ export async function GET(request: Request) {
     }
 
     const appName = process.env.WOOCOMMERCE_APP_NAME || 'Saleor Partner Portal';
-    const host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'https://partner.salp.shop';
+    let host = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'https://partner.salp.shop';
+
+    // Force HTTPS for WooCommerce callback
+    if (host.startsWith('http://')) {
+        host = host.replace('http://', 'https://');
+    }
 
     // WooCommerce Auth Parameters
     const scope = 'read_write';
