@@ -10,8 +10,9 @@ import { encrypt } from "@/lib/encryption";
 export async function triggerIntegrationSync(integrationId: number, provider: string) {
     try {
         console.log(`Triggering ${provider} Sync for Integration: ${integrationId}`);
-
-        const taskId = provider === 'shopify' ? 'shopify-product-sync' : 'woocommerce-product-sync';
+        let taskId = 'woocommerce-product-sync';
+        if (provider === 'shopify') taskId = 'shopify-product-sync';
+        if (provider === 'lightspeed') taskId = 'lightspeed-product-sync';
 
         const handle = await tasks.trigger(taskId, {
             integrationId: integrationId,
