@@ -2,6 +2,7 @@ import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { redirect } from 'next/navigation';
 import { encrypt } from '@/lib/encryption';
+import { auth } from '@/auth';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -36,14 +37,12 @@ export async function GET(request: Request) {
     }
 
     const accessToken = tokenData.access_token;
-    // const userId = 1; // TODO: Get from Session!
-    // This is tricky: In a real app, we need to know WHICH user initiated this.
-    // Usually we use a 'state' parameter in the Auth URL that contains a signed user ID, or relies on a session cookie.
-    // For this MVP, we will assume single-user-session or hardcode ID 1, 
-    // BUT to do it right we should check the session cookie present in this callback request.
 
-    // MOCK: Assuming User 1 for now as per plan
-    const userId = 1;
+    const session = await auth();
+    if (!session || !session.user?.id) {
+        return new Response('Unauthorized', { status: 401 });
+    }
+    const userId = parseInt(session.user.id);
 
     // --- PHASE 3: Save to DB ---
     // In Shopify, the Client Secret is the secret used for HMAC verification of webhooks.

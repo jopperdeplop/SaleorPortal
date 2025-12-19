@@ -2,11 +2,17 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { updateShopSettings } from '@/app/actions/settings';
-// import { auth } from '@/auth';
+import { auth } from '@/auth';
+import { redirect } from 'next/navigation';
 
 export default async function SettingsPage() {
-    // const session = await auth();
-    const userId = 1;
+    const session = await auth();
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
+
+    if (!userId) {
+        redirect('/login');
+    }
+
     const user = await db.query.users.findFirst({
         where: eq(users.id, userId)
     });

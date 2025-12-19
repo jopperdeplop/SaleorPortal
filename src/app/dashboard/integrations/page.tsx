@@ -1,16 +1,20 @@
 import { db } from '@/db';
 import { integrations } from '@/db/schema';
+import { auth } from '@/auth';
 import { eq } from 'drizzle-orm';
-// import { auth } from '@/auth'; // Assuming auth
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import DisconnectButton from './disconnect-button';
 import SyncButton from './sync-button';
 
 export default async function IntegrationsPage() {
-    // const session = await auth();
-    // const userId = session?.user?.id;
-    const userId = 1; // Mock user for dev until Auth is fully wired or session verified
+    const session = await auth();
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
+
+    if (!userId) {
+        redirect('/login');
+    }
 
     const userIntegrations = await db.select().from(integrations).where(eq(integrations.userId, userId));
 

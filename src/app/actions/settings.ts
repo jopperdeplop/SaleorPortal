@@ -5,10 +5,13 @@ import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
+import { auth } from '@/auth';
+
 export async function updateShopSettings(formData: FormData) {
-    // Mock User ID for now (Phase 3 dev mode)
-    // In real app: const session = await auth(); const userId = session.user.id;
-    const userId = 1;
+    const session = await auth();
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
+
+    if (!userId) throw new Error("Unauthorized");
 
     const vatNumber = formData.get('vatNumber') as string;
     const street = formData.get('street') as string;
