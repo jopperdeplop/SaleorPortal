@@ -24,7 +24,12 @@ export async function GET(request: Request) {
 
     // Exchange code for access token
     // Endpoint: POST https://{domain_prefix}.retail.lightspeed.app/api/1.0/token
+    let success = false;
     try {
+        if (!clientId || !clientSecret) {
+            throw new Error(`Lightspeed Environment Variables Missing: ID=${!!clientId}, Secret=${!!clientSecret}`);
+        }
+
         const tokenResponse = await fetch(`https://${domainPrefix}.retail.lightspeed.app/api/1.0/token`, {
             method: 'POST',
             headers: {
@@ -42,13 +47,14 @@ export async function GET(request: Request) {
         const tokenData = await tokenResponse.json();
 
         if (!tokenData.access_token) {
-            console.error('Lightspeed Token Error:', tokenData);
-            return new Response('Failed to get access token from Lightspeed', { status: 500 });
+            console.error('❌ [Lightspeed Callback] Token Exchange Failed:', tokenData);
+            return new Response(`Failed to get access token: ${tokenData.error || 'Unknown error'}`, { status: 500 });
         }
 
         const session = await auth();
         if (!session || !session.user?.id) {
-            return new Response('Unauthorized', { status: 401 });
+            console.error('❌ [Lightspeed Callback] No active session found.');
+            return new Response('Unauthorized - Please log in to the portal first', { status: 401 });
         }
         const userId = parseInt(session.user.id);
 
@@ -56,28 +62,30 @@ export async function GET(request: Request) {
         const webhookSecret = crypto.randomBytes(32).toString('hex');
         const encryptedSecret = encrypt(webhookSecret);
 
+        console.info(`✅ [Lightspeed Callback] Token received for user ${userId}. Saving to DB...`);
+
         // Save to DB
-        // We use the domainPrefix as the storeUrl to uniquely identify the instance
-        const [newIntegration] = await db.insert(integrations).values({
+        await db.insert(integrations).values({
             userId,
             provider: 'lightspeed',
             storeUrl: domainPrefix,
             accessToken: tokenData.access_token,
             status: 'active',
             settings: {
-                refreshToken: tokenData.refresh_token, // Store refresh token if needed
+                refreshToken: tokenData.refresh_token,
                 expiresAt: Date.now() + (tokenData.expires_in * 1000),
-                webhookSecret: encryptedSecret, // Encrypted for security
+                webhookSecret: encryptedSecret,
                 sync_inventory: true
             }
-        }).returning();
+        });
 
-        // NOTE: Lightspeed X-Series webhooks are often managed via the Private App settings 
-        // or through the API. We will handle webhook registration in a separate step or via implementation logic.
+        success = true;
+    } catch (error: any) {
+        console.error('❌ [Lightspeed Callback] Fatal Error:', error);
+        return new Response(`Internal Server Error: ${error.message || 'Unknown'}`, { status: 500 });
+    }
 
+    if (success) {
         redirect('/dashboard/integrations?success=true');
-    } catch (error) {
-        console.error('Lightspeed Callback Error:', error);
-        return new Response('Internal Server Error', { status: 500 });
     }
 }
