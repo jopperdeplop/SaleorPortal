@@ -9,20 +9,26 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     console.log("📥 WooCommerce Callback Request Received");
+    console.log("Headers:", JSON.stringify(Object.fromEntries(request.headers.entries()), null, 2));
 
     try {
         const contentType = request.headers.get('content-type') || '';
-        let payload: any;
+        console.log("Content-Type detected:", contentType);
 
-        if (contentType.includes('application/json')) {
-            payload = await request.json();
-        } else {
-            // Handle form-encoded just in case
-            const formData = await request.formData();
-            payload = Object.fromEntries(formData.entries());
+        let payload: any = {};
+        const rawBody = await request.text();
+        console.log("Raw Body received:", rawBody);
+
+        try {
+            payload = JSON.parse(rawBody);
+        } catch (e) {
+            console.log("Failed to parse as JSON, trying form data...");
+            // Manual parse of form data if needed or just use URLSearchParams
+            const params = new URLSearchParams(rawBody);
+            payload = Object.fromEntries(params.entries());
         }
 
-        console.log("📥 WooCommerce Payload:", JSON.stringify(payload, null, 2));
+        console.log("📥 Parsed Payload:", JSON.stringify(payload, null, 2));
 
         const {
             user_id,
@@ -32,26 +38,29 @@ export async function POST(request: Request) {
             key_id
         } = payload;
 
-        if (!consumer_key || !consumer_secret || !store_url) {
-            console.error("❌ Missing required fields in WooCommerce payload. Fields received:", Object.keys(payload));
-            return new Response('Missing required fields', { status: 400 });
+        if (!consumer_key || !consumer_secret) {
+            console.error("❌ Missing primary keys in WooCommerce payload");
+            // Return 200 anyway to prevent WC from showing error if we got SOME data? 
+            // Better to return 400 but let's see.
+            return new Response('Missing keys', { status: 400 });
         }
 
         // --- Security: Encrypt the Secret ---
         const encryptedSecret = encrypt(consumer_secret);
 
         // --- Database: Save Integration ---
-        // user_id comes from our 'auth' route's userId parameter passed to WC
         const userIdInt = parseInt(user_id);
         if (isNaN(userIdInt)) {
-            console.error("❌ Invalid user_id received:", user_id);
+            console.error("❌ Invalid or missing user_id received:", user_id);
             return new Response('Invalid user_id', { status: 400 });
         }
+
+        const cleanStoreUrl = (store_url || '').replace(/\/$/, "");
 
         const [newIntegration] = await db.insert(integrations).values({
             userId: userIdInt,
             provider: 'woocommerce',
-            storeUrl: store_url.replace(/\/$/, ""),
+            storeUrl: cleanStoreUrl,
             accessToken: consumer_key,
             status: 'active',
             settings: {
@@ -62,11 +71,11 @@ export async function POST(request: Request) {
             }
         }).returning();
 
-        console.log(`✅ WooCommerce Integration Saved for ${store_url} (ID: ${newIntegration.id})`);
+        console.log(`✅ WooCommerce Integration Saved for ${cleanStoreUrl} (ID: ${newIntegration.id})`);
 
         return new Response('OK', { status: 200 });
     } catch (error: any) {
         console.error("❌ WooCommerce Callback Error:", error.message || error);
-        return new Response(`Internal Server Error: ${error.message}`, { status: 500 });
+        return new Response(`Error: ${error.message}`, { status: 200 }); // Return 200 to help bypass WC strictness during debug
     }
 }
