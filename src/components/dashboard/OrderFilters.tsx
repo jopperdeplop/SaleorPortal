@@ -61,8 +61,8 @@ function CustomSelect({
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "w-full flex items-center justify-between text-left pl-10 pr-4 py-2.5 text-sm font-medium bg-white border rounded-xl shadow-sm text-carbon transition-all duration-200 outline-none",
-                    isOpen ? "border-terracotta ring-1 ring-terracotta/20" : "border-vapor hover:border-terracotta/50"
+                    "w-full flex items-center justify-between text-left pl-10 pr-4 py-2.5 text-sm font-medium bg-white dark:bg-card border rounded-xl shadow-sm text-carbon dark:text-white transition-all duration-200 outline-none",
+                    isOpen ? "border-terracotta ring-1 ring-terracotta/20" : "border-vapor dark:border-stone-700 hover:border-terracotta/50"
                 )}
             >
                 <div className="absolute left-3.5 flex items-center pointer-events-none text-stone-400">
@@ -73,7 +73,7 @@ function CustomSelect({
             </button>
 
             {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-white border border-vapor rounded-xl shadow-lg py-2 animate-in fade-in zoom-in-95 duration-100 origin-top overflow-hidden">
+                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-card border border-vapor dark:border-stone-700 rounded-xl shadow-lg py-2 animate-in fade-in zoom-in-95 duration-100 origin-top overflow-hidden">
                     {options.map((option) => {
                         const isSelected = option.value === value;
                         return (
@@ -85,7 +85,7 @@ function CustomSelect({
                                 }}
                                 className={cn(
                                     "w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors group",
-                                    isSelected ? "text-terracotta font-medium bg-orange-50" : "text-carbon hover:bg-stone-50 hover:text-terracotta"
+                                    isSelected ? "text-terracotta font-medium bg-orange-50 dark:bg-orange-900/10" : "text-carbon dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 hover:text-terracotta"
                                 )}
                             >
                                 <span>{option.label}</span>
@@ -173,9 +173,9 @@ function DatePicker({
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "w-full flex items-center text-left px-3 py-2.5 text-sm font-medium bg-white border rounded-xl shadow-sm transition-all duration-200 outline-none",
-                    isOpen ? "border-terracotta ring-1 ring-terracotta/20" : "border-vapor hover:border-terracotta/50",
-                    !value ? "text-stone-400" : "text-carbon"
+                    "w-full flex items-center text-left px-3 py-2.5 text-sm font-medium bg-white dark:bg-card border rounded-xl shadow-sm transition-all duration-200 outline-none",
+                    isOpen ? "border-terracotta ring-1 ring-terracotta/20" : "border-vapor dark:border-stone-700 hover:border-terracotta/50",
+                    !value ? "text-stone-400" : "text-carbon dark:text-white"
                 )}
             >
                 <Calendar className="w-4 h-4 text-stone-400 mr-2" />
@@ -183,7 +183,7 @@ function DatePicker({
             </button>
 
             {isOpen && (
-                <div className="absolute z-50 mt-2 bg-white border border-vapor rounded-xl shadow-xl p-4 animate-in fade-in zoom-in-95 duration-100 origin-top min-w-[280px]">
+                <div className="absolute z-50 mt-2 bg-white dark:bg-card border border-vapor dark:border-stone-700 rounded-xl shadow-xl p-4 animate-in fade-in zoom-in-95 duration-100 origin-top min-w-[280px]">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-4">
                         <button onClick={handlePrevMonth} className="p-1 hover:bg-stone-50 rounded-full text-stone-400 hover:text-terracotta transition-colors">
@@ -225,7 +225,7 @@ function DatePicker({
                                         "w-8 h-8 flex items-center justify-center text-sm rounded-lg transition-colors",
                                         isSelected
                                             ? "bg-terracotta text-white font-medium shadow-sm"
-                                            : "text-carbon hover:bg-orange-50 hover:text-terracotta",
+                                            : "text-carbon dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-terracotta",
                                         !isSelected && isToday && "font-bold text-terracotta ring-1 ring-terracotta/30"
                                     )}
                                 >
@@ -334,7 +334,7 @@ export default function OrderFilters({ defaultStartDate, defaultEndDate }: Order
     const isFiltered = searchParams.has('startDate') || searchParams.has('status');
 
     return (
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 bg-stone-50/50 p-2 rounded-2xl border border-vapor/50">
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 bg-stone-50/50 dark:bg-stone-900/50 p-2 rounded-2xl border border-vapor/50 dark:border-stone-800/50">
 
             {/* Period Select */}
             <CustomSelect

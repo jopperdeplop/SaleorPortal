@@ -62,12 +62,12 @@ export default async function ProductDetailsPage({
                 </Link>
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-serif font-bold text-carbon mb-2">{product.name}</h1>
-                        <div className="flex items-center gap-4 text-sm text-stone-500">
-                            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stone-100">
+                        <h1 className="text-3xl font-serif font-bold text-carbon dark:text-white mb-2">{product.name}</h1>
+                        <div className="flex items-center gap-4 text-sm text-stone-500 dark:text-stone-400">
+                            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800">
                                 <Tag className="w-3.5 h-3.5" /> {product.category?.name || 'Uncategorized'}
                             </span>
-                            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stone-100">
+                            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800">
                                 <Layers className="w-3.5 h-3.5" /> {product.variants?.length || 0} Variants
                             </span>
                         </div>
@@ -88,29 +88,29 @@ export default async function ProductDetailsPage({
                 <div className="lg:col-span-2 space-y-8">
 
                     {/* Gallery section */}
-                    <div className="bg-white rounded-xl shadow-sm border border-vapor overflow-hidden p-6">
-                        <h2 className="font-serif font-bold text-lg text-carbon mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border overflow-hidden p-6">
+                        <h2 className="font-serif font-bold text-lg text-carbon dark:text-white mb-4 flex items-center gap-2">
                             <ImageIcon className="w-5 h-5 text-terracotta" /> Media
                         </h2>
                         {product.media && product.media.length > 0 ? (
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {product.media.map((media: any, i: number) => (
-                                    <div key={i} className="aspect-square bg-stone-50 rounded-lg border border-vapor overflow-hidden relative group">
+                                    <div key={i} className="aspect-square bg-stone-50 dark:bg-stone-900 rounded-lg border border-vapor dark:border-stone-700 overflow-hidden relative group">
                                         <img src={media.url} alt={media.alt || product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <div className="aspect-video bg-stone-50 rounded-lg border border-vapor flex items-center justify-center text-stone-300">
+                            <div className="aspect-video bg-stone-50 dark:bg-stone-900 rounded-lg border border-vapor dark:border-stone-700 flex items-center justify-center text-stone-300 dark:text-stone-600">
                                 <p className="flex items-center gap-2">No media available <ImageIcon className="w-4 h-4" /></p>
                             </div>
                         )}
                     </div>
 
                     {/* Description */}
-                    <div className="bg-white rounded-xl shadow-sm border border-vapor p-6">
-                        <h2 className="font-serif font-bold text-lg text-carbon mb-4">Description</h2>
-                        <div className="prose prose-stone max-w-none text-sm text-stone-600">
+                    <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border p-6">
+                        <h2 className="font-serif font-bold text-lg text-carbon dark:text-white mb-4">Description</h2>
+                        <div className="prose prose-stone dark:prose-invert max-w-none text-sm text-stone-600 dark:text-stone-300">
                             {descriptionContent || <p className="italic text-stone-400">No description provided.</p>}
                         </div>
                     </div>
@@ -120,13 +120,13 @@ export default async function ProductDetailsPage({
                 <div className="space-y-6">
 
                     {/* Attributes */}
-                    <div className="bg-white rounded-xl shadow-sm border border-vapor p-6">
-                        <h2 className="font-serif font-bold text-lg text-carbon mb-4">Attributes</h2>
+                    <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border p-6">
+                        <h2 className="font-serif font-bold text-lg text-carbon dark:text-white mb-4">Attributes</h2>
                         <div className="space-y-3">
                             {product.attributes?.map((attr: any, i: number) => (
-                                <div key={i} className="flex justify-between items-center text-sm border-b border-vapor last:border-0 pb-2 last:pb-0">
-                                    <span className="text-stone-500 font-medium">{attr.attribute.name}</span>
-                                    <span className="text-carbon">{attr.values.map((v: any) => v.name).join(', ')}</span>
+                                <div key={i} className="flex justify-between items-center text-sm border-b border-vapor dark:border-stone-800 last:border-0 pb-2 last:pb-0">
+                                    <span className="text-stone-500 dark:text-stone-400 font-medium">{attr.attribute.name}</span>
+                                    <span className="text-carbon dark:text-stone-200">{attr.values.map((v: any) => v.name).join(', ')}</span>
                                 </div>
                             ))}
                             {(!product.attributes || product.attributes.length === 0) && (
@@ -136,20 +136,20 @@ export default async function ProductDetailsPage({
                     </div>
 
                     {/* Variants Preview */}
-                    <div className="bg-white rounded-xl shadow-sm border border-vapor p-6">
-                        <h2 className="font-serif font-bold text-lg text-carbon mb-4">Variants</h2>
+                    <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border p-6">
+                        <h2 className="font-serif font-bold text-lg text-carbon dark:text-white mb-4">Variants</h2>
                         <div className="space-y-3">
                             {product.variants?.map((variant: any) => (
-                                <div key={variant.id} className="p-3 rounded-lg bg-stone-50/50 border border-vapor flex justify-between items-center">
+                                <div key={variant.id} className="p-3 rounded-lg bg-stone-50/50 dark:bg-stone-900/50 border border-vapor dark:border-stone-800 flex justify-between items-center">
                                     <div>
-                                        <p className="text-sm font-medium text-carbon">{variant.name}</p>
-                                        <p className="text-xs text-stone-500">SKU: {variant.sku}</p>
+                                        <p className="text-sm font-medium text-carbon dark:text-stone-200">{variant.name}</p>
+                                        <p className="text-xs text-stone-500 dark:text-stone-400">SKU: {variant.sku}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-sm font-bold text-carbon">
+                                        <p className="text-sm font-bold text-carbon dark:text-white">
                                             {variant.pricing?.price?.gross?.currency} {variant.pricing?.price?.gross?.amount.toFixed(2)}
                                         </p>
-                                        <p className="text-xs text-stone-500">
+                                        <p className="text-xs text-stone-500 dark:text-stone-400">
                                             {variant.quantityAvailable > 0 ? `${variant.quantityAvailable} in stock` : 'Out of stock'}
                                         </p>
                                     </div>

@@ -43,15 +43,15 @@ export default async function OrdersPage({
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-serif font-bold text-carbon">Orders</h1>
+                <h1 className="text-3xl font-serif font-bold text-carbon dark:text-white">Orders</h1>
             </div>
 
             <OrderFilters defaultStartDate={startDate} defaultEndDate={endDate} />
 
-            <div className="bg-white rounded-xl shadow-sm border border-vapor overflow-hidden">
+            <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border overflow-hidden">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-gray-50 border-b border-vapor text-sm text-stone-500">
+                        <tr className="bg-gray-50 dark:bg-stone-900 border-b border-vapor dark:border-stone-800 text-sm text-stone-500 dark:text-stone-400">
                             <th className="py-4 px-6 font-medium">Order ID</th>
                             <th className="py-4 px-6 font-medium">Date</th>
                             <th className="py-4 px-6 font-medium">Customer</th>
@@ -69,24 +69,24 @@ export default async function OrdersPage({
                             </tr>
                         ) : (
                             orders.map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="py-4 px-6 font-mono text-sm text-carbon">
+                                <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-stone-900/50 transition-colors">
+                                    <td className="py-4 px-6 font-mono text-sm text-carbon dark:text-stone-200">
                                         <Link href={`/dashboard/orders/${order.id}`} className="hover:text-terracotta underline">
                                             {order.displayId || order.id}
                                         </Link>
                                     </td>
-                                    <td className="py-4 px-6 text-sm text-stone-600">{order.date}</td>
-                                    <td className="py-4 px-6 text-sm text-stone-600">{order.customer}</td>
+                                    <td className="py-4 px-6 text-sm text-stone-600 dark:text-stone-400">{order.date}</td>
+                                    <td className="py-4 px-6 text-sm text-stone-600 dark:text-stone-400">{order.customer}</td>
                                     <td className="py-4 px-6">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            ${order.status === 'FULFILLED' ? 'bg-green-100 text-green-800' :
-                                                order.status === 'UNFULFILLED' ? 'bg-yellow-100 text-yellow-800' :
-                                                    order.status === 'CANCELED' ? 'bg-red-100 text-red-800' :
-                                                        'bg-gray-100 text-gray-800'}`}>
+                                            ${order.status === 'FULFILLED' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                                                order.status === 'UNFULFILLED' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300' :
+                                                    order.status === 'CANCELED' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300' :
+                                                        'bg-gray-100 dark:bg-stone-800 text-gray-800 dark:text-stone-300'}`}>
                                             {order.status}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-6 text-sm font-medium text-carbon text-right">
+                                    <td className="py-4 px-6 text-sm font-medium text-carbon dark:text-stone-200 text-right">
                                         {order.currency} {order.total.toFixed(2)}
                                     </td>
                                     <td className="py-4 px-6 text-right">
