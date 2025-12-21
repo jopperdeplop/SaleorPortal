@@ -58,49 +58,39 @@ export async function toggleProductStatus(productId: string, isEnabled: boolean)
             throw new Error("Forbidden: You do not own this product.");
         }
 
-        // 2. GET CHANNEL ID
-        // We need the ID for the default channel slug
-        const channelSlug = process.env.NEXT_PUBLIC_SALEOR_CHANNEL || 'default-channel';
-        const channelQuery = `
-            query ChannelId($slug: String!) {
-                channel(slug: $slug) {
+        // 2. GET ALL CHANNELS
+        // We want to toggle visibility across ALL channels
+        const channelsQuery = `
+            query GetChannels {
+                channels {
                     id
                 }
             }
         `;
 
-        const channelRes = await fetch(API_URL, {
+        const channelsRes = await fetch(API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: channelQuery, variables: { slug: channelSlug } }),
-            cache: 'no-store' // Cacheable ideally, but safe to fetch
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ query: channelsQuery }),
+            cache: 'no-store'
         });
-        const channelJson = await channelRes.json();
-        const channelId = channelJson.data?.channel?.id;
+        const channelsJson = await channelsRes.json();
+        const availableChannels = channelsJson.data?.channels || [];
 
-        if (!channelId) {
-            throw new Error(`Channel not found: ${channelSlug}`);
+        if (availableChannels.length === 0) {
+            throw new Error("No channels found in Saleor.");
         }
 
-        // 3. UPDATE PRODUCT STATUS
-        const mutation = `
-            mutation UpdateProductStatus($id: ID!, $input: ProductInput!) {
-                productConnection: productUpdate(id: $id, input: $input) {
-                    product {
-                        id
-                        isAvailable
-                    }
-                    errors {
-                        field
-                        message
-                    }
-                }
-            }
-        `;
+        const channelUpdates = availableChannels.map((ch: any) => ({
+            channelId: ch.id,
+            isPublished: isEnabled,
+            isAvailableForPurchase: isEnabled
+        }));
 
-        // We update channel listing specifically
-        // Wait, `productUpdate` is for global properties. To update availability per channel, we need `productChannelListingUpdate`.
-
+        // 3. UPDATE PRODUCT STATUS (GLOBAL)
         const channelListingMutation = `
             mutation UpdateChannelListing($id: ID!, $input: ProductChannelListingUpdateInput!) {
                 productChannelListingUpdate(id: $id, input: $input) {
@@ -124,11 +114,7 @@ export async function toggleProductStatus(productId: string, isEnabled: boolean)
                 variables: {
                     id: productId,
                     input: {
-                        updateChannels: [{
-                            channelId: channelId,
-                            isPublished: isEnabled,
-                            isAvailableForPurchase: isEnabled
-                        }]
+                        updateChannels: channelUpdates
                     }
                 }
             })

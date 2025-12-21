@@ -76,8 +76,19 @@ export async function getProducts(brand: string): Promise<Product[]> {
           }
         `;
 
-    // Note: We don't pass 'brand' variable anymore
-    const response = await executeGraphQL(query, { channel });
+    // Note: We authenticate as App to see unpublished products
+    const token = process.env.SALEOR_APP_TOKEN;
+
+    // We must use `fetch` directly to add Authorization header, as `executeGraphQL` is anonymous
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ query, variables: { channel } }),
+      cache: 'no-store'
+    }).then(res => res.json());
 
     if (response.errors) {
       console.error("GraphQL Errors:", response.errors);
