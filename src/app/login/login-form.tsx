@@ -12,8 +12,8 @@ export default function LoginForm() {
     const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
 
     return (
-        <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-6">
-            <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl border border-vapor shadow-sm">
+        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-6">
+            <div className="w-full max-w-md space-y-8 bg-white dark:bg-stone-900 p-8 rounded-xl border border-vapor dark:border-stone-800 shadow-sm">
 
                 {/* Header */}
                 <div className="flex items-center justify-between">
@@ -45,7 +45,7 @@ export default function LoginForm() {
                                 autoComplete="email"
                                 required
                                 placeholder="admin@saleor.io"
-                                className="appearance-none block w-full px-3 py-2 border border-vapor rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta sm:text-sm text-carbon"
+                                className="appearance-none block w-full px-3 py-2 border border-vapor dark:border-stone-700 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta sm:text-sm text-carbon bg-white dark:bg-stone-950 dark:text-white"
                             />
                         </div>
                     </div>
@@ -62,7 +62,7 @@ export default function LoginForm() {
                                 autoComplete="current-password"
                                 required
                                 placeholder="saleor"
-                                className="appearance-none block w-full px-3 py-2 border border-vapor rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta sm:text-sm text-carbon"
+                                className="appearance-none block w-full px-3 py-2 border border-vapor dark:border-stone-700 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta sm:text-sm text-carbon bg-white dark:bg-stone-950 dark:text-white"
                             />
                         </div>
                     </div>
@@ -85,7 +85,7 @@ export default function LoginForm() {
                 </form>
 
                 {/* Credentials Hint */}
-                <div className="mt-6 bg-stone-50 p-4 rounded-md border border-vapor text-xs text-stone-500">
+                <div className="mt-6 bg-stone-50 dark:bg-stone-800 p-4 rounded-md border border-vapor dark:border-stone-700 text-xs text-stone-500 dark:text-stone-400">
                     <p className="font-semibold mb-1">Demo Credentials:</p>
                     <ul className="space-y-1">
                         <li><span className="font-mono text-terracotta">admin@saleor.io</span> / <span className="font-mono">saleor</span></li>

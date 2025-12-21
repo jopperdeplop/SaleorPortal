@@ -17,9 +17,9 @@ export default async function DashboardLayout({
     const brandName = session?.user?.brand || "Brand Portal";
 
     return (
-        <div className="min-h-screen bg-stone-50 text-carbon font-sans">
+        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-carbon font-sans">
             {/* Header */}
-            <header className="h-16 border-b border-vapor bg-white flex items-center justify-between px-6 sticky top-0 z-10">
+            <header className="h-16 border-b border-vapor dark:border-stone-800 bg-white dark:bg-stone-900 flex items-center justify-between px-6 sticky top-0 z-10">
                 <div className="flex items-center gap-8">
                     <h1 className="text-2xl font-serif font-bold text-terracotta">{brandName}</h1>
                     <nav className="hidden md:flex items-center gap-6 text-sm font-medium">

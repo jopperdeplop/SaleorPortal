@@ -35,10 +35,10 @@ export function ProductRow({ product }: ProductRowProps) {
     };
 
     return (
-        <tr className="hover:bg-stone-50 transition-colors group">
+        <tr className="hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors group">
             <td className="px-6 py-4">
                 <NextLink href={`/dashboard/products/${encodeURIComponent(product.id)}`}>
-                    <div className="w-10 h-10 bg-stone-100 rounded-md flex items-center justify-center text-stone-400 overflow-hidden border border-vapor">
+                    <div className="w-10 h-10 bg-stone-100 dark:bg-stone-800 rounded-md flex items-center justify-center text-stone-400 overflow-hidden border border-vapor dark:border-stone-700">
                         {product.image ? (
                             <img
                                 src={product.image}
@@ -56,7 +56,7 @@ export function ProductRow({ product }: ProductRowProps) {
                     {product.name}
                 </NextLink>
             </td>
-            <td className="px-6 py-4 text-stone-600">
+            <td className="px-6 py-4 text-stone-600 dark:text-stone-400">
                 {product.category}
             </td>
             <td className="px-6 py-4 font-sans font-medium text-carbon">
@@ -67,7 +67,7 @@ export function ProductRow({ product }: ProductRowProps) {
                     {/* Status Badge */}
                     <span className={cn(
                         "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit",
-                        isEnabled ? "bg-green-100 text-green-800" : "bg-stone-100 text-stone-500"
+                        isEnabled ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300" : "bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400"
                     )}>
                         {isEnabled ? 'Active' : 'Inactive'}
                     </span>
@@ -78,7 +78,7 @@ export function ProductRow({ product }: ProductRowProps) {
                         disabled={isPending}
                         className={cn(
                             "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-offset-2",
-                            isEnabled ? "bg-terracotta" : "bg-stone-200",
+                            isEnabled ? "bg-terracotta" : "bg-stone-200 dark:bg-stone-600",
                             isPending && "opacity-50 cursor-not-allowed"
                         )}
                         role="switch"

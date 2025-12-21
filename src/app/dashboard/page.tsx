@@ -47,7 +47,7 @@ export default async function DashboardPage({
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 border border-vapor rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-card p-6 border border-vapor dark:border-border rounded-lg shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-sm text-stone-500 font-medium">Total Revenue</span>
                         <DollarSign className="w-5 h-5 text-terracotta" />
@@ -56,7 +56,7 @@ export default async function DashboardPage({
                         ${metrics.totalRevenue.toLocaleString()}
                     </div>
                 </div>
-                <div className="bg-white p-6 border border-vapor rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-card p-6 border border-vapor dark:border-border rounded-lg shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-sm text-stone-500 font-medium">Products Listed</span>
                         <Package className="w-5 h-5 text-cobalt" />
@@ -65,7 +65,7 @@ export default async function DashboardPage({
                         {metrics.productsListed}
                     </div>
                 </div>
-                <div className="bg-white p-6 border border-vapor rounded-lg shadow-sm">
+                <div className="bg-white dark:bg-card p-6 border border-vapor dark:border-border rounded-lg shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-sm text-stone-500 font-medium">Avg. Order Value</span>
                         <TrendingUp className="w-5 h-5 text-signal" />
@@ -79,13 +79,13 @@ export default async function DashboardPage({
             <OrderFilters defaultStartDate={startDate} defaultEndDate={endDate} />
 
             {/* Recent Orders */}
-            <section className="bg-white border border-vapor rounded-lg shadow-sm overflow-hidden">
+            <section className="bg-white dark:bg-card border border-vapor dark:border-border rounded-lg shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-vapor">
                     <h3 className="text-lg font-serif font-medium text-carbon">Recent Orders</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-stone-50 text-stone-500 font-medium">
+                        <thead className="bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-400 font-medium">
                             <tr>
                                 <th className="px-6 py-3">Order ID</th>
                                 <th className="px-6 py-3">Date</th>

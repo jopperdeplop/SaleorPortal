@@ -86,7 +86,7 @@ export function ProductsTable({ initialProducts }: ProductsTableProps) {
     return (
         <div className="space-y-4">
             {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 border border-vapor rounded-lg shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white dark:bg-card p-4 border border-vapor dark:border-border rounded-lg shadow-sm">
 
                 {/* Search */}
                 <div className="relative w-full sm:w-96">
@@ -98,7 +98,7 @@ export function ProductsTable({ initialProducts }: ProductsTableProps) {
                         placeholder="Search products..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 block w-full rounded-md border-0 py-1.5 text-carbon ring-1 ring-inset ring-stone-200 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6"
+                        className="pl-10 block w-full rounded-md border-0 py-1.5 text-carbon ring-1 ring-inset ring-stone-200 dark:ring-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6 bg-white dark:bg-stone-950 dark:text-white"
                     />
                 </div>
 
@@ -107,7 +107,7 @@ export function ProductsTable({ initialProducts }: ProductsTableProps) {
                     <select
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="block w-full sm:w-48 rounded-md border-0 py-1.5 pl-3 pr-10 text-carbon ring-1 ring-inset ring-stone-200 focus:ring-2 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6 cursor-pointer"
+                        className="block w-full sm:w-48 rounded-md border-0 py-1.5 pl-3 pr-10 text-carbon ring-1 ring-inset ring-stone-200 dark:ring-stone-700 focus:ring-2 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6 cursor-pointer bg-white dark:bg-stone-950 dark:text-white"
                     >
                         <option value="">All Categories</option>
                         {categories.map(cat => (
@@ -118,10 +118,10 @@ export function ProductsTable({ initialProducts }: ProductsTableProps) {
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-vapor rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-card border border-vapor dark:border-border rounded-lg shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-stone-50 text-stone-500 font-medium">
+                        <thead className="bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-400 font-medium">
                             <tr>
                                 <th className="px-6 py-3 w-16">Image</th>
 
