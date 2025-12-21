@@ -6,6 +6,7 @@ export interface Product {
     currency: string;
     brand: string;
     stockStatus: 'In Stock' | 'Low Stock' | 'Out of Stock';
+    isAvailable?: boolean;
     image?: string;
 }
 

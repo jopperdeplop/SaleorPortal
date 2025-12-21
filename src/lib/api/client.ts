@@ -111,6 +111,7 @@ export async function getProducts(brand: string): Promise<Product[]> {
         currency: price?.currency || 'USD',
         brand: brand,
         stockStatus: stockStatus,
+        isAvailable: node.isAvailable,
         image: node.thumbnail?.url || undefined
       };
     });

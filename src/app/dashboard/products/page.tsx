@@ -3,6 +3,7 @@ import { getProducts } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Package } from "lucide-react";
+import { ProductRow } from "./product-row";
 
 export default async function ProductsPage() {
     const session = await auth();
@@ -27,49 +28,12 @@ export default async function ProductsPage() {
                                 <th className="px-6 py-3">Product Name</th>
                                 <th className="px-6 py-3">Category</th>
                                 <th className="px-6 py-3">Price</th>
-                                <th className="px-6 py-3">Stock Status</th>
+                                <th className="px-6 py-3">Status</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-vapor">
                             {products.map((product) => (
-                                <tr key={product.id} className="hover:bg-stone-50 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <Link href={`/dashboard/products/${encodeURIComponent(product.id)}`}>
-                                            <div className="w-10 h-10 bg-stone-100 rounded-md flex items-center justify-center text-stone-400 overflow-hidden border border-vapor">
-                                                {product.image ? (
-                                                    <img
-                                                        src={product.image}
-                                                        alt={product.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <Package className="w-5 h-5" />
-                                                )}
-                                            </div>
-                                        </Link>
-                                    </td>
-                                    <td className="px-6 py-4 font-serif font-medium text-lg text-carbon">
-                                        <Link href={`/dashboard/products/${encodeURIComponent(product.id)}`} className="hover:text-terracotta transition-colors">
-                                            {product.name}
-                                        </Link>
-                                    </td>
-                                    <td className="px-6 py-4 text-stone-600">
-                                        {product.category}
-                                    </td>
-                                    <td className="px-6 py-4 font-sans font-medium text-carbon">
-                                        {product.currency} {product.price.toFixed(2)}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={cn(
-                                            "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                                            product.stockStatus === 'In Stock' && "bg-green-100 text-green-800",
-                                            product.stockStatus === 'Low Stock' && "bg-yellow-100 text-yellow-800",
-                                            product.stockStatus === 'Out of Stock' && "bg-red-100 text-red-800",
-                                        )}>
-                                            {product.stockStatus}
-                                        </span>
-                                    </td>
-                                </tr>
+                                <ProductRow key={product.id} product={product} />
                             ))}
                             {products.length === 0 && (
                                 <tr>
