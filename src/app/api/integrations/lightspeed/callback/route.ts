@@ -80,8 +80,8 @@ export async function GET(request: Request) {
         });
 
         // --- AUTOMATION: Register Webhooks ---
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-        const webhookUrl = `https://saleor-app-template.vercel.app/api/webhooks/lightspeed-fulfillment?secret=${webhookSecret}`;
+        const appUrl = process.env.SHOPIFY_WEBHOOK_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://saleor-app-template-seven.vercel.app");
+        const webhookUrl = `${appUrl}/api/webhooks/lightspeed-fulfillment?secret=${webhookSecret}`;
 
         console.info(`📡 Registering Lightspeed Webhooks for ${domainPrefix}...`);
 
