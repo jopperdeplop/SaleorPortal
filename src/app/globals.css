@@ -3,7 +3,27 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Light Theme */
+    --bg-app: #fafaf9;      /* stone-50 */
+    --bg-card: #ffffff;     /* white */
+    --text-primary: #0F0F0F;/* carbon */
+    --text-secondary: #78716c; /* stone-500 */
+    --border-color: #F3F4F6;/* vapor */
+    --accent: #cc5500;      /* terracotta */
+  }
+
+  .dark {
+    /* Dark Theme */
+    --bg-app: #0c0a09;      /* stone-950 */
+    --bg-card: #1c1917;     /* stone-900 */
+    --text-primary: #e7e5e4;/* stone-200 */
+    --text-secondary: #a8a29e; /* stone-400 */
+    --border-color: #292524;/* stone-800 */
+    --accent: #cc5500;      /* terracotta (keep or adjust) */
+  }
+
   body {
-    @apply bg-stone-50 text-carbon antialiased;
+    @apply bg-[var(--bg-app)] text-[var(--text-primary)] antialiased transition-colors duration-300;
   }
 }

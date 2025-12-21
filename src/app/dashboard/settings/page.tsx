@@ -4,6 +4,8 @@ import { eq } from 'drizzle-orm';
 import { updateShopSettings } from '@/app/actions/settings';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
+import { Paintbrush } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function SettingsPage() {
     const session = await auth();
@@ -94,6 +96,24 @@ export default async function SettingsPage() {
                     </form>
                 </div>
             </div>
+            {/* Appearance */}
+            <section className="space-y-4">
+                <div className="flex items-center gap-3 text-terracotta border-b border-vapor pb-2">
+                    <Paintbrush className="w-5 h-5" />
+                    <h2 className="text-xl font-serif text-carbon">Appearance</h2>
+                </div>
+                <div className="bg-white dark:bg-card p-6 rounded-lg border border-vapor dark:border-border shadow-sm">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-sm font-medium text-carbon">Theme Preference</h3>
+                            <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
+                                Choose how the portal looks to you.
+                            </p>
+                        </div>
+                        <ThemeToggle />
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }
