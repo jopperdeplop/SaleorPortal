@@ -1,8 +1,8 @@
 'use client';
 
 import { Product } from "@/types";
-import { useState, useMemo } from "react";
-import { Search, ArrowUpDown, ArrowUp, ArrowDown, ChevronDown } from "lucide-react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, ChevronDown, Check, Tag } from "lucide-react";
 import { ProductRow } from "./product-row";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,84 @@ type SortDirection = 'asc' | 'desc';
 interface SortConfig {
     key: SortKey;
     direction: SortDirection;
+}
+
+interface CustomSelectProps {
+    value: string;
+    onChange: (val: string) => void;
+    options: string[];
+    icon?: any;
+    placeholder?: string;
+}
+
+function CustomSelect({ value, onChange, options, icon: Icon, placeholder = "Select..." }: CustomSelectProps) {
+    const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative min-w-[200px]" ref={containerRef}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={cn(
+                    "w-full flex items-center justify-between text-left pl-10 pr-4 py-2.5 text-sm font-medium bg-white dark:bg-card border rounded-xl shadow-sm text-carbon dark:text-white transition-all duration-200 outline-none",
+                    isOpen ? "border-terracotta ring-1 ring-terracotta/20" : "border-vapor dark:border-stone-700 hover:border-terracotta/50"
+                )}
+            >
+                <div className="absolute left-3.5 flex items-center pointer-events-none text-stone-400">
+                    {Icon && <Icon className="w-4 h-4" />}
+                </div>
+                <span className="block truncate">{value || placeholder}</span>
+                <ChevronDown className={cn("w-4 h-4 text-stone-400 transition-transform duration-200", isOpen && "rotate-180 text-terracotta")} />
+            </button>
+
+            {isOpen && (
+                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-card border border-vapor dark:border-stone-700 rounded-xl shadow-lg py-2 animate-in fade-in zoom-in-95 duration-100 origin-top overflow-hidden max-h-60 overflow-y-auto">
+                    <button
+                        onClick={() => {
+                            onChange("");
+                            setIsOpen(false);
+                        }}
+                        className={cn(
+                            "w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors group",
+                            value === "" ? "text-terracotta font-medium bg-orange-50 dark:bg-orange-900/10" : "text-carbon dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 hover:text-terracotta"
+                        )}
+                    >
+                        <span>All Categories</span>
+                        {value === "" && <Check className="w-3.5 h-3.5 text-terracotta" />}
+                    </button>
+                    {options.map((option) => {
+                        const isSelected = option === value;
+                        return (
+                            <button
+                                key={option}
+                                onClick={() => {
+                                    onChange(option);
+                                    setIsOpen(false);
+                                }}
+                                className={cn(
+                                    "w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors group",
+                                    isSelected ? "text-terracotta font-medium bg-orange-50 dark:bg-orange-900/10" : "text-carbon dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 hover:text-terracotta"
+                                )}
+                            >
+                                <span>{option}</span>
+                                {isSelected && <Check className="w-3.5 h-3.5 text-terracotta" />}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
 }
 
 export function ProductsTable({ initialProducts }: ProductsTableProps) {
@@ -86,34 +164,31 @@ export function ProductsTable({ initialProducts }: ProductsTableProps) {
     return (
         <div className="space-y-4">
             {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white dark:bg-card p-4 border border-vapor dark:border-border rounded-lg shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-stone-50/50 dark:bg-stone-900/50 p-2 border border-vapor/50 dark:border-stone-800/50 rounded-2xl shadow-sm">
 
                 {/* Search */}
                 <div className="relative w-full sm:w-96">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search className="h-5 w-5 text-stone-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <Search className="h-4 w-4 text-stone-400" />
                     </div>
                     <input
                         type="text"
                         placeholder="Search products..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 block w-full rounded-md border-0 py-1.5 text-carbon ring-1 ring-inset ring-stone-200 dark:ring-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6 bg-white dark:bg-stone-950 dark:text-white"
+                        className="pl-10 block w-full rounded-xl border-0 py-2.5 text-carbon shadow-sm ring-1 ring-inset ring-vapor dark:ring-stone-700 placeholder:text-stone-400 focus:ring-1 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6 bg-white dark:bg-card dark:text-white transition-all duration-200"
                     />
                 </div>
 
                 {/* Filters */}
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <select
+                    <CustomSelect
                         value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="block w-full sm:w-48 rounded-md border-0 py-1.5 pl-3 pr-10 text-carbon ring-1 ring-inset ring-stone-200 dark:ring-stone-700 focus:ring-2 focus:ring-inset focus:ring-terracotta sm:text-sm sm:leading-6 cursor-pointer bg-white dark:bg-stone-950 dark:text-white"
-                    >
-                        <option value="">All Categories</option>
-                        {categories.map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                    </select>
+                        onChange={setSelectedCategory}
+                        options={categories}
+                        icon={Tag}
+                        placeholder="All Categories"
+                    />
                 </div>
             </div>
 
