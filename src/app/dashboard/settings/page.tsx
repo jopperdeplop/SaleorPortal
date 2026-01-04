@@ -20,8 +20,14 @@ export default async function SettingsPage() {
     });
 
     if (!user) return <div>User not found</div>;
-
-    const address = user.warehouseAddress as any || {};
+    
+    interface WarehouseAddress {
+        street?: string;
+        city?: string;
+        zip?: string;
+        country?: string;
+    }
+    const address = (user.warehouseAddress as WarehouseAddress) || {};
 
     return (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -39,6 +45,47 @@ export default async function SettingsPage() {
                                         <input type="text" name="vatNumber" id="vatNumber" defaultValue={user.vatNumber || ''} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md p-2 border bg-white dark:bg-stone-950 dark:text-white" />
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">Shipping & Channels</h3>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Select the countries you ship to. Your products will automatically be listed in the corresponding Saleor channels.</p>
+
+                            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {[
+                                    { name: "Austria", code: "AT" },
+                                    { name: "Belgium", code: "BE" },
+                                    { name: "Croatia", code: "HR" },
+                                    { name: "Cyprus", code: "CY" },
+                                    { name: "Estonia", code: "EE" },
+                                    { name: "Finland", code: "FI" },
+                                    { name: "France", code: "FR" },
+                                    { name: "Germany", code: "DE" },
+                                    { name: "Greece", code: "GR" },
+                                    { name: "Ireland", code: "IE" },
+                                    { name: "Italy", code: "IT" },
+                                    { name: "Latvia", code: "LV" },
+                                    { name: "Lithuania", code: "LT" },
+                                    { name: "Luxembourg", code: "LU" },
+                                    { name: "Malta", code: "MT" },
+                                    { name: "Netherlands", code: "NL" },
+                                    { name: "Portugal", code: "PT" },
+                                    { name: "Slovakia", code: "SK" },
+                                    { name: "Slovenia", code: "SI" },
+                                    { name: "Spain", code: "ES" }
+                                ].map((country) => (
+                                    <label key={country.code} className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            name="shippingCountries"
+                                            value={country.code}
+                                            defaultChecked={(user.shippingCountries as string[] || []).includes(country.code)}
+                                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                        />
+                                        <span className="text-sm text-gray-700 dark:text-gray-300">{country.name}</span>
+                                    </label>
+                                ))}
                             </div>
                         </div>
 

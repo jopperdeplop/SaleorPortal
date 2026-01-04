@@ -2,8 +2,12 @@ import { auth } from "@/auth";
 import { getVendorProduct } from "@/lib/api/client";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Package, Tag, Layers, ImageIcon } from "lucide-react";
+import { ArrowLeft, Tag, Layers, ImageIcon } from "lucide-react";
 import ProductLanguageSelector from "@/components/products/ProductLanguageSelector";
+import ProductOverridesSection from "@/components/products/ProductOverridesSection";
+import { db } from "@/db";
+import { users, productOverrides } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function ProductDetailsPage({
     params,
@@ -27,31 +31,41 @@ export default async function ProductDetailsPage({
     }
 
     // Parse Description logic
-    let descriptionContent;
+    let descriptionData: unknown = null;
     try {
-        const descJson = JSON.parse(product.description);
-        // Rich Text (EditorJS)
-        if (descJson.blocks) {
-            descriptionContent = (
-                <div className="space-y-2">
-                    {descJson.blocks.map((b: any, i: number) => (
-                        // Use dangerouslySetInnerHTML because EditorJS text can contain inline HTML (b, i, a tags)
-                        // This also fixes the issue where wrapped <p> tags in the data were being escaped by React
-                        <div key={i} dangerouslySetInnerHTML={{ __html: b.data.text }} />
-                    ))}
-                </div>
-            );
-        } else if (typeof descJson === 'string') {
-            // Case: Description is a JSON-stringified HTML string (e.g. "\"<p>...</p>\"")
-            descriptionContent = <div dangerouslySetInnerHTML={{ __html: descJson }} />;
-        } else {
-            // Fallback: It was object but not EditorJS blocks? Or null?
-            descriptionContent = <div dangerouslySetInnerHTML={{ __html: product.description }} />;
-        }
-    } catch (e) {
-        // Plain Text or HTML String (Not JSON)
+        descriptionData = JSON.parse(product.description);
+    } catch {
+        descriptionData = product.description;
+    }
+
+    let descriptionContent;
+    const isBlocks = (data: any): data is { blocks: { data: { text: string } }[] } => 
+        data && typeof data === 'object' && 'blocks' in data;
+
+    if (isBlocks(descriptionData)) {
+        descriptionContent = (
+            <div className="space-y-2">
+                {descriptionData.blocks.map((b, i) => (
+                    <div key={i} dangerouslySetInnerHTML={{ __html: b.data.text }} />
+                ))}
+            </div>
+        );
+    } else if (typeof descriptionData === 'string') {
+        descriptionContent = <div dangerouslySetInnerHTML={{ __html: descriptionData }} />;
+    } else {
         descriptionContent = <div dangerouslySetInnerHTML={{ __html: product.description }} />;
     }
+
+    // Fetch Global and Override Settings
+    const user = await db.query.users.findFirst({
+        where: eq(users.brand, session.user.brand!)
+    });
+    const globalCountries = (user?.shippingCountries as string[]) || [];
+
+    const override = await db.query.productOverrides.findFirst({
+        where: eq(productOverrides.productId, productId)
+    });
+    const overrideCountries = override ? (override.shippingCountries as string[]) : null;
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
@@ -86,6 +100,13 @@ export default async function ProductDetailsPage({
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Content: Gallery & Description */}
                 <div className="lg:col-span-2 space-y-8">
+                    
+                    {/* Channel Availability (New) */}
+                    <ProductOverridesSection 
+                        productId={productId}
+                        globalCountries={globalCountries}
+                        overrideCountries={overrideCountries}
+                    />
 
                     {/* Gallery section */}
                     <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border overflow-hidden p-6">
@@ -94,7 +115,7 @@ export default async function ProductDetailsPage({
                         </h2>
                         {product.media && product.media.length > 0 ? (
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {product.media.map((media: any, i: number) => (
+                                {product.media.map((media: { url: string; alt: string | null }, i: number) => (
                                     <div key={i} className="aspect-square bg-stone-50 dark:bg-stone-900 rounded-lg border border-vapor dark:border-stone-700 overflow-hidden relative group">
                                         <img src={media.url} alt={media.alt || product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                     </div>
@@ -123,10 +144,10 @@ export default async function ProductDetailsPage({
                     <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border p-6">
                         <h2 className="font-serif font-bold text-lg text-carbon dark:text-white mb-4">Attributes</h2>
                         <div className="space-y-3">
-                            {product.attributes?.map((attr: any, i: number) => (
+                            {product.attributes?.map((attr: { attribute: { name: string }, values: { name: string }[] }, i: number) => (
                                 <div key={i} className="flex justify-between items-center text-sm border-b border-vapor dark:border-stone-800 last:border-0 pb-2 last:pb-0">
                                     <span className="text-stone-500 dark:text-stone-400 font-medium">{attr.attribute.name}</span>
-                                    <span className="text-carbon dark:text-stone-200">{attr.values.map((v: any) => v.name).join(', ')}</span>
+                                    <span className="text-carbon dark:text-stone-200">{attr.values.map((v: { name: string }) => v.name).join(', ')}</span>
                                 </div>
                             ))}
                             {(!product.attributes || product.attributes.length === 0) && (
@@ -139,7 +160,7 @@ export default async function ProductDetailsPage({
                     <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border p-6">
                         <h2 className="font-serif font-bold text-lg text-carbon dark:text-white mb-4">Variants</h2>
                         <div className="space-y-3">
-                            {product.variants?.map((variant: any) => (
+                            {product.variants?.map((variant: { id: string; name: string; sku: string; pricing: { price: { gross: { currency: string; amount: number } } }; quantityAvailable: number }) => (
                                 <div key={variant.id} className="p-3 rounded-lg bg-stone-50/50 dark:bg-stone-900/50 border border-vapor dark:border-stone-800 flex justify-between items-center">
                                     <div>
                                         <p className="text-sm font-medium text-carbon dark:text-stone-200">{variant.name}</p>
