@@ -42,10 +42,9 @@ export async function requestFeature(formData: FormData) {
     });
 
     revalidatePath('/dashboard/request-feature');
-    return { success: true };
 }
 
-export async function updateFeatureStatus(id: number, status: string) {
+export async function updateFeatureStatus(id: number, status: string, _formData: FormData) {
     const session = await auth();
     if ((session?.user as any)?.role !== 'admin') {
         throw new Error('Unauthorized');
@@ -57,5 +56,4 @@ export async function updateFeatureStatus(id: number, status: string) {
 
     revalidatePath('/admin/feature-requests');
     revalidatePath('/dashboard/request-feature');
-    return { success: true };
 }
