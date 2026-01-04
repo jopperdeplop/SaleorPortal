@@ -88,7 +88,7 @@ export default async function RequestFeaturePage() {
 
                     {myRequests.length === 0 ? (
                         <div className="bg-white dark:bg-stone-900 border border-dashed border-vapor dark:border-stone-800 rounded-xl p-12 text-center text-stone-400">
-                            You haven't submitted any feature requests yet.
+                            You haven&apos;t submitted any feature requests yet.
                         </div>
                     ) : (
                         myRequests.map((request) => (

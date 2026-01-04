@@ -4,11 +4,11 @@ import { desc, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { updateFeatureStatus } from '@/app/actions/request-feature';
-import { BadgeHelp, User, Clock, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
+import { User, Clock, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
 
 export default async function AdminFeatureRequestsPage() {
     const session = await auth();
-    if ((session?.user as any)?.role !== 'admin') {
+    if (session?.user?.role !== 'admin') {
         redirect('/dashboard');
     }
 

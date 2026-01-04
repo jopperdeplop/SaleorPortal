@@ -42,14 +42,14 @@ export async function requestFeature(formData: FormData) {
     revalidatePath('/dashboard/request-feature');
 }
 
-export async function updateFeatureStatus(id: number, status: string, _formData: FormData) {
+export async function updateFeatureStatus(id: number, status: string, _: FormData) {
     const session = await auth();
-    if ((session?.user as any)?.role !== 'admin') {
+    if (session?.user?.role !== 'admin') {
         throw new Error('Unauthorized');
     }
 
     await db.update(featureRequests)
-        .set({ status: status as any })
+        .set({ status: status as 'pending' | 'approved' | 'rejected' | 'implemented' })
         .where(eq(featureRequests.id, id));
 
     revalidatePath('/admin/feature-requests');
