@@ -6,8 +6,10 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { Paintbrush } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SubmitButton } from "@/components/SubmitButton";
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ success?: string }> }) {
+    const { success } = await searchParams;
     const session = await auth();
     const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
@@ -34,6 +36,11 @@ export default async function SettingsPage() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Shop Settings</h1>
             <div className="bg-white dark:bg-card shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
+                    {success && (
+                        <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-md text-sm">
+                            Changes saved successfully!
+                        </div>
+                    )}
                     <form action={updateShopSettings} className="space-y-6">
 
                         <div>
@@ -133,9 +140,7 @@ export default async function SettingsPage() {
 
                         <div className="pt-5 border-t border-gray-200 dark:border-gray-700">
                             <div className="flex justify-end">
-                                <button type="submit" className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Save Settings
-                                </button>
+                                <SubmitButton>Save Settings</SubmitButton>
                             </div>
                         </div>
 

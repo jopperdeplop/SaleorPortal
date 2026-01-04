@@ -4,6 +4,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 
@@ -35,10 +36,17 @@ export async function updateShopSettings(formData: FormData) {
 
     // Trigger Sync Task
     if (updatedUser[0]?.brand) {
-        await tasks.trigger("sync-brand-channels", {
-            brandName: updatedUser[0].brand
-        });
+        console.log(`🚀 Triggering sync-brand-channels for brand: ${updatedUser[0].brand}`);
+        try {
+            await tasks.trigger("sync-brand-channels", {
+                brandName: updatedUser[0].brand
+            });
+            console.log("✅ Triggered successfully");
+        } catch (e) {
+            console.error("❌ Failed to trigger sync-brand-channels:", e);
+        }
     }
 
     revalidatePath('/dashboard/settings');
+    redirect('/dashboard/settings?success=true');
 }
