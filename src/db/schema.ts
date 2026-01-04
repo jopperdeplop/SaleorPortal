@@ -34,3 +34,13 @@ export const integrations = pgTable('integrations', {
     settings: jsonb('settings'), // { sync_inventory: boolean, shipping_provider: string }
     createdAt: timestamp('created_at').defaultNow(),
 });
+
+export const featureRequests = pgTable('feature_requests', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id).notNull(),
+    title: text('title').notNull(),
+    description: text('description').notNull(),
+    priority: text('priority').default('medium').notNull(), // 'low', 'medium', 'high'
+    status: text('status').default('pending').notNull(), // 'pending', 'approved', 'rejected', 'implemented'
+    createdAt: timestamp('created_at').defaultNow(),
+});

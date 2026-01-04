@@ -1,6 +1,6 @@
 import { auth, signOut } from "@/auth";
 import Link from 'next/link';
-import { LogOut, LayoutDashboard, Package, ShoppingBag, Plug, Settings } from 'lucide-react';
+import { LogOut, LayoutDashboard, Package, ShoppingBag, Plug, Settings, Sparkles } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
@@ -37,6 +37,9 @@ export default async function DashboardLayout({
                         </Link>
                         <Link href="/dashboard/settings" className="hover:text-terracotta transition-colors flex items-center gap-2">
                             <Settings className="w-4 h-4" /> Shop Settings
+                        </Link>
+                        <Link href="/dashboard/request-feature" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                            <Sparkles className="w-4 h-4" /> Request Feature
                         </Link>
                     </nav>
                 </div>
