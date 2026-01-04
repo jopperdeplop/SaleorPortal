@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { eq, desc } from 'drizzle-orm';
 import { requestFeature } from '@/app/actions/request-feature';
 import { Sparkles, MessageSquare, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { FeatureRequestForm } from './FeatureRequestForm';
 
 export default async function RequestFeaturePage() {
     const session = await auth();
@@ -17,11 +18,11 @@ export default async function RequestFeaturePage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-3xl font-serif font-bold text-stone-900 flex items-center gap-3">
+                <h1 className="text-3xl font-serif font-bold text-stone-900 dark:text-stone-100 flex items-center gap-3">
                     <Sparkles className="w-8 h-8 text-terracotta" />
                     Request a Feature
                 </h1>
-                <p className="text-stone-500 mt-2">
+                <p className="text-stone-500 dark:text-stone-400 mt-2">
                     Have an idea to make the portal better? Let us know below.
                 </p>
             </div>
@@ -30,58 +31,14 @@ export default async function RequestFeaturePage() {
                 {/* Submit Form */}
                 <div className="lg:col-span-1">
                     <div className="bg-white dark:bg-stone-900 p-6 rounded-xl border border-vapor dark:border-stone-800 shadow-sm sticky top-24">
-                        <h2 className="text-lg font-bold mb-4">New Request</h2>
-                        <form action={requestFeature} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                                    Title
-                                </label>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    required
-                                    placeholder="e.g. Export orders to CSV"
-                                    className="w-full px-4 py-2 rounded-lg border border-vapor dark:border-stone-800 bg-stone-50 dark:bg-stone-950 focus:ring-2 focus:ring-terracotta outline-none transition-all"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                                    Description
-                                </label>
-                                <textarea
-                                    name="description"
-                                    required
-                                    rows={4}
-                                    placeholder="Tell us more about how this feature would help you..."
-                                    className="w-full px-4 py-2 rounded-lg border border-vapor dark:border-stone-800 bg-stone-50 dark:bg-stone-950 focus:ring-2 focus:ring-terracotta outline-none transition-all resize-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                                    Priority
-                                </label>
-                                <select
-                                    name="priority"
-                                    className="w-full px-4 py-2 rounded-lg border border-vapor dark:border-stone-800 bg-stone-50 dark:bg-stone-950 focus:ring-2 focus:ring-terracotta outline-none transition-all"
-                                >
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-                            <button
-                                type="submit"
-                                className="w-full bg-terracotta text-white py-2 rounded-lg font-medium hover:bg-terracotta/90 transition-colors shadow-lg shadow-terracotta/20"
-                            >
-                                Submit Request
-                            </button>
-                        </form>
+                        <h2 className="text-lg font-bold mb-4 text-stone-900 dark:text-white">New Request</h2>
+                        <FeatureRequestForm action={requestFeature} />
                     </div>
                 </div>
 
                 {/* My Requests List */}
                 <div className="lg:col-span-2 space-y-4">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
+                    <h2 className="text-xl font-bold flex items-center gap-2 text-stone-900 dark:text-white">
                         <MessageSquare className="w-5 h-5" />
                         My Requests
                     </h2>
@@ -97,20 +54,20 @@ export default async function RequestFeaturePage() {
                                 className="bg-white dark:bg-stone-900 p-6 rounded-xl border border-vapor dark:border-stone-800 shadow-sm hover:shadow-md transition-shadow"
                             >
                                 <div className="flex items-start justify-between gap-4">
-                                    <div>
+                                    <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
                                             <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
-                                                request.priority === 'high' ? 'bg-red-100 text-red-600' :
-                                                request.priority === 'medium' ? 'bg-orange-100 text-orange-600' :
-                                                'bg-blue-100 text-blue-600'
+                                                request.priority === 'high' ? 'bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400' :
+                                                request.priority === 'medium' ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400' :
+                                                'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400'
                                             }`}>
                                                 {request.priority}
                                             </span>
                                             <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                                                request.status === 'implemented' ? 'bg-green-100 text-green-600' :
-                                                request.status === 'approved' ? 'bg-indigo-100 text-indigo-600' :
-                                                request.status === 'rejected' ? 'bg-stone-100 text-stone-600' :
-                                                'bg-yellow-100 text-yellow-600'
+                                                request.status === 'implemented' ? 'bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400' :
+                                                request.status === 'approved' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400' :
+                                                request.status === 'rejected' ? 'bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400' :
+                                                'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400'
                                             }`}>
                                                 {request.status === 'pending' && <Clock className="w-3 h-3" />}
                                                 {request.status === 'approved' && <CheckCircle2 className="w-3 h-3" />}
@@ -119,8 +76,8 @@ export default async function RequestFeaturePage() {
                                                 {request.status}
                                             </span>
                                         </div>
-                                        <h3 className="text-lg font-bold text-stone-900">{request.title}</h3>
-                                        <p className="text-stone-600 mt-2 whitespace-pre-wrap">{request.description}</p>
+                                        <h3 className="text-lg font-bold text-stone-900 dark:text-white">{request.title}</h3>
+                                        <p className="text-stone-600 dark:text-stone-400 mt-2 whitespace-pre-wrap">{request.description}</p>
                                         <p className="text-xs text-stone-400 mt-4">
                                             Submitted on {new Date(request.createdAt!).toLocaleDateString()}
                                         </p>

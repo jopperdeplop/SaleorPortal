@@ -7,7 +7,7 @@ import { hash } from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 
-export async function approveApplication(applicationId: number) {
+export async function approveApplication(applicationId: number, _: FormData) {
     // 1. Fetch Application
     const app = await db.query.vendorApplications.findFirst({
         where: eq(vendorApplications.id, applicationId)
@@ -43,14 +43,14 @@ export async function approveApplication(applicationId: number) {
 
     // 4. (TODO) Send Email via Resend/SMTP with `tempPassword`
 
-    revalidatePath('/admin/applications');
+    revalidatePath('/admin');
 }
 
 
-export async function rejectApplication(applicationId: number) {
+export async function rejectApplication(applicationId: number, _: FormData) {
     await db.update(vendorApplications)
         .set({ status: 'rejected', processedAt: new Date() })
         .where(eq(vendorApplications.id, applicationId));
 
-    revalidatePath('/admin/applications');
+    revalidatePath('/admin');
 }

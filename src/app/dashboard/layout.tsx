@@ -41,6 +41,11 @@ export default async function DashboardLayout({
                         <Link href="/dashboard/request-feature" className="hover:text-terracotta transition-colors flex items-center gap-2">
                             <Sparkles className="w-4 h-4" /> Request Feature
                         </Link>
+                        {session?.user?.role === 'admin' && (
+                            <Link href="/admin" className="text-terracotta font-bold hover:opacity-80 transition-opacity flex items-center gap-2 border-l border-vapor pl-6">
+                                <Settings className="w-4 h-4" /> Admin Portal
+                            </Link>
+                        )}
                     </nav>
                 </div>
 
