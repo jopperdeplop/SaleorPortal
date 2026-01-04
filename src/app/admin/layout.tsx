@@ -2,10 +2,10 @@ import PortalLayout from "@/components/layout/PortalLayout";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Dashboard - Salp.shop",
+    title: "Admin - Salp.shop",
 };
 
-export default function DashboardLayout({
+export default function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
