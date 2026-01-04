@@ -80,7 +80,7 @@ export default async function SettingsPage() {
                                             type="checkbox"
                                             name="shippingCountries"
                                             value={country.code}
-                                            defaultChecked={(user.shippingCountries as string[] || []).includes(country.code)}
+                                            defaultChecked={!user.shippingCountries || (user.shippingCountries as string[]).length === 0 || (user.shippingCountries as string[]).includes(country.code)}
                                             className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                                         />
                                         <span className="text-sm text-gray-700 dark:text-gray-300">{country.name}</span>
