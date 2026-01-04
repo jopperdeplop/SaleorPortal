@@ -23,26 +23,30 @@ export default async function DashboardLayout({
                 <div className="flex items-center gap-8">
                     <h1 className="text-2xl font-serif font-bold text-terracotta">{brandName}</h1>
                     <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                        <Link href="/dashboard" className="hover:text-terracotta transition-colors flex items-center gap-2">
-                            <LayoutDashboard className="w-4 h-4" /> Overview
-                        </Link>
-                        <Link href="/dashboard/products" className="hover:text-terracotta transition-colors flex items-center gap-2">
-                            <Package className="w-4 h-4" /> Products
-                        </Link>
-                        <Link href="/dashboard/orders" className="hover:text-terracotta transition-colors flex items-center gap-2">
-                            <ShoppingBag className="w-4 h-4" /> Orders
-                        </Link>
-                        <Link href="/dashboard/integrations" className="hover:text-terracotta transition-colors flex items-center gap-2">
-                            <Plug className="w-4 h-4" /> Integrations
-                        </Link>
-                        <Link href="/dashboard/settings" className="hover:text-terracotta transition-colors flex items-center gap-2">
-                            <Settings className="w-4 h-4" /> Shop Settings
-                        </Link>
-                        <Link href="/dashboard/request-feature" className="hover:text-terracotta transition-colors flex items-center gap-2">
-                            <Sparkles className="w-4 h-4" /> Request Feature
-                        </Link>
+                        {session?.user?.role !== 'admin' && (
+                            <>
+                                <Link href="/dashboard" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                                    <LayoutDashboard className="w-4 h-4" /> Overview
+                                </Link>
+                                <Link href="/dashboard/products" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                                    <Package className="w-4 h-4" /> Products
+                                </Link>
+                                <Link href="/dashboard/orders" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                                    <ShoppingBag className="w-4 h-4" /> Orders
+                                </Link>
+                                <Link href="/dashboard/integrations" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                                    <Plug className="w-4 h-4" /> Integrations
+                                </Link>
+                                <Link href="/dashboard/settings" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                                    <Settings className="w-4 h-4" /> Shop Settings
+                                </Link>
+                                <Link href="/dashboard/request-feature" className="hover:text-terracotta transition-colors flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4" /> Request Feature
+                                </Link>
+                            </>
+                        )}
                         {session?.user?.role === 'admin' && (
-                            <Link href="/admin" className="text-terracotta font-bold hover:opacity-80 transition-opacity flex items-center gap-2 border-l border-vapor pl-6">
+                            <Link href="/admin" className="text-terracotta font-bold hover:opacity-80 transition-opacity flex items-center gap-2">
                                 <Settings className="w-4 h-4" /> Admin Portal
                             </Link>
                         )}

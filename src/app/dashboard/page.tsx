@@ -3,6 +3,7 @@ import { getMetrics, getRecentOrders } from "@/lib/api/client";
 import { DollarSign, Package, TrendingUp, Eye } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import OrderFilters from "@/components/dashboard/OrderFilters";
 
@@ -30,6 +31,9 @@ export default async function DashboardPage({
     }
 
     const session = await auth();
+    if (session?.user?.role === 'admin') {
+        redirect('/admin');
+    }
     const brand = session?.user?.brand || 'Nike';
 
     // Pass filters to BOTH metrics and orders
