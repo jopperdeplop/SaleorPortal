@@ -18,11 +18,11 @@ export default async function RequestFeaturePage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-3xl font-serif font-bold text-stone-900 dark:text-stone-100 flex items-center gap-3">
+                <h1 className="text-3xl font-serif font-bold text-stone-900 dark:text-white flex items-center gap-3">
                     <Sparkles className="w-8 h-8 text-terracotta" />
                     Request a Feature
                 </h1>
-                <p className="text-stone-500 dark:text-stone-400 mt-2">
+                <p className="text-stone-500 dark:text-stone-300 mt-2">
                     Have an idea to make the portal better? Let us know below.
                 </p>
             </div>
@@ -77,8 +77,8 @@ export default async function RequestFeaturePage() {
                                             </span>
                                         </div>
                                         <h3 className="text-lg font-bold text-stone-900 dark:text-white">{request.title}</h3>
-                                        <p className="text-stone-600 dark:text-stone-400 mt-2 whitespace-pre-wrap">{request.description}</p>
-                                        <p className="text-xs text-stone-400 mt-4">
+                                        <p className="text-stone-600 dark:text-stone-300 mt-2 whitespace-pre-wrap">{request.description}</p>
+                                        <p className="text-xs text-stone-400 dark:text-stone-500 mt-4">
                                             Submitted on {new Date(request.createdAt!).toLocaleDateString()}
                                         </p>
                                     </div>

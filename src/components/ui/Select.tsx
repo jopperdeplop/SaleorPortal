@@ -50,17 +50,20 @@ export function Select({
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "w-full flex items-center justify-between text-left px-4 py-2.5 text-sm font-medium bg-white dark:bg-stone-900 border rounded-xl shadow-sm text-carbon dark:text-stone-100 transition-all duration-200 outline-none",
+                    "w-full flex items-center justify-between text-left pr-4 py-2.5 text-sm font-medium bg-white dark:bg-stone-950 border rounded-xl shadow-sm text-carbon dark:text-white transition-all duration-200 outline-none",
+                    Icon ? "pl-10" : "px-4",
                     isOpen ? "border-terracotta ring-1 ring-terracotta/20" : "border-vapor dark:border-stone-800 hover:border-terracotta/50"
                 )}
             >
-                <div className="flex items-center gap-2 truncate">
-                    {Icon && <Icon className="w-4 h-4 text-stone-400" />}
-                    <span className={cn("block truncate", !selectedOption && "text-stone-400")}>
-                        {selectedOption ? selectedOption.label : placeholder}
-                    </span>
-                </div>
-                <ChevronDown className={cn("w-4 h-4 text-stone-400 transition-transform duration-200 ml-2 flex-shrink-0", isOpen && "rotate-180 text-terracotta")} />
+                {Icon && (
+                    <div className="absolute left-3.5 flex items-center pointer-events-none text-stone-400">
+                        <Icon className="w-4 h-4" />
+                    </div>
+                )}
+                <span className={cn("block truncate", !selectedOption && "text-stone-400")}>
+                    {selectedOption ? selectedOption.label : placeholder}
+                </span>
+                <ChevronDown className={cn("w-4 h-4 text-stone-400 transition-transform duration-200 flex-shrink-0", isOpen && "rotate-180 text-terracotta")} />
             </button>
 
             {isOpen && (

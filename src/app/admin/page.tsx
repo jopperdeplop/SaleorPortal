@@ -63,10 +63,10 @@ export default async function AdminDashboard({
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl font-serif font-bold text-stone-900 dark:text-stone-100 mb-2">
+                    <h1 className="text-4xl font-serif font-bold text-stone-900 dark:text-white mb-2">
                         Admin Portal
                     </h1>
-                    <p className="text-stone-500 dark:text-stone-400">
+                    <p className="text-stone-500 dark:text-stone-300">
                         Manage your ecosystem, applications, and vendor requests.
                     </p>
                 </div>
@@ -136,7 +136,7 @@ function ApplicationsList({ applications }: { applications: any[] }) {
                                         <Building2 className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <div className="font-bold text-stone-900 dark:text-stone-100">{app.companyName}</div>
+                                        <div className="font-bold text-stone-900 dark:text-white">{app.companyName}</div>
                                         <div className="text-xs text-stone-400">VAT: {app.vatNumber}</div>
                                     </div>
                                 </div>
@@ -207,7 +207,7 @@ function FeatureRequestsList({ requests }: { requests: any[] }) {
                                         <Building2 className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <div className="font-bold text-stone-900 dark:text-stone-100">{req.vendorBrand}</div>
+                                        <div className="font-bold text-stone-900 dark:text-white">{req.vendorBrand}</div>
                                         <div className="text-xs text-stone-500">{req.vendorName}</div>
                                         <a 
                                             href={`mailto:${req.vendorEmail}?subject=Regarding your feature request: ${req.title}`}
@@ -222,8 +222,8 @@ function FeatureRequestsList({ requests }: { requests: any[] }) {
                             </td>
                             <td className="px-6 py-5 align-top">
                                 <div className="max-w-md">
-                                    <div className="text-sm font-bold text-stone-900 dark:text-stone-100 mb-1">{req.title}</div>
-                                    <p className="text-sm text-stone-500 dark:text-stone-400 line-clamp-2 italic">{req.description}</p>
+                                    <div className="text-sm font-bold text-stone-900 dark:text-white mb-1">{req.title}</div>
+                                    <p className="text-sm text-stone-500 dark:text-stone-300 line-clamp-2 italic">{req.description}</p>
                                     <div className="flex items-center gap-1 text-[10px] text-stone-400 mt-3 font-medium uppercase tracking-tighter">
                                         <Calendar className="w-3 h-3" />
                                         {new Date(req.createdAt).toLocaleDateString()}
