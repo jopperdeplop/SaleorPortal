@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Settings, Palette, Shield } from "lucide-react";
 
 export default async function AdminSettingsPage() {

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 import { redirect } from "next/navigation";
 import { AdminLinks, VendorLinks } from "@/components/layout/HeaderLinks";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface PortalLayoutProps {
     children: React.ReactNode;

@@ -27,14 +27,15 @@ function cn(...classes: (string | undefined | null | false)[]) {
 export default async function AdminDashboard({
     searchParams,
 }: {
-    searchParams: { tab?: string };
+    searchParams: Promise<{ tab?: string }>;
 }) {
     const session = await auth();
     if (session?.user?.role !== 'admin') {
         redirect('/dashboard');
     }
 
-    const activeTab = searchParams.tab || 'applications';
+    const resolvedParams = await searchParams;
+    const activeTab = resolvedParams.tab || 'applications';
 
     // Fetch Data
     const featureRequestsData = await db
