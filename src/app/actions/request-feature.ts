@@ -26,9 +26,7 @@ export async function requestFeature(formData: FormData) {
     });
 
     if (!validatedFields.success) {
-        return {
-            error: validatedFields.error.flatten().fieldErrors,
-        };
+        return;
     }
 
     const { title, description, priority } = validatedFields.data;
