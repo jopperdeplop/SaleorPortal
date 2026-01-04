@@ -61,42 +61,13 @@ export default async function AdminDashboard({
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-serif font-bold text-stone-900 dark:text-white mb-2">
-                        Admin Portal
-                    </h1>
-                    <p className="text-stone-500 dark:text-stone-300">
-                        Manage your ecosystem, applications, and vendor requests.
-                    </p>
-                </div>
-                
-                <div className="flex bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border border-vapor dark:border-stone-700">
-                    <Link 
-                        href="/admin?tab=applications"
-                        className={cn(
-                            "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2",
-                            activeTab === 'applications' 
-                                ? "bg-white dark:bg-stone-900 text-terracotta shadow-sm" 
-                                : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
-                        )}
-                    >
-                        <ClipboardList className="w-4 h-4" />
-                        Applications
-                    </Link>
-                    <Link 
-                        href="/admin?tab=features"
-                        className={cn(
-                            "px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2",
-                            activeTab === 'features' 
-                                ? "bg-white dark:bg-stone-900 text-terracotta shadow-sm" 
-                                : "text-stone-500 hover:text-stone-700 dark:hover:text-stone-300"
-                        )}
-                    >
-                        <Sparkles className="w-4 h-4" />
-                        Feature Requests
-                    </Link>
-                </div>
+            <div>
+                <h1 className="text-4xl font-serif font-bold text-stone-900 dark:text-white mb-2">
+                    Admin Portal
+                </h1>
+                <p className="text-stone-500 dark:text-stone-300">
+                    Manage your ecosystem, applications, and vendor requests.
+                </p>
             </div>
 
             {/* Content Area */}
