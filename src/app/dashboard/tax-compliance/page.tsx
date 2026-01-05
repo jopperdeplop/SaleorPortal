@@ -89,11 +89,12 @@ export default async function TaxCompliancePage() {
 
   if (error) {
     return (
-      <div className="p-12 text-center bg-red-50 dark:bg-red-900/10 rounded-3xl border border-red-100 dark:border-red-900/20">
+      <div className="p-12 text-center bg-red-50 dark:bg-red-900/10 rounded-3xl border border-red-100 dark:border-red-900/20 max-w-2xl mx-auto my-12">
         <AlertCircle className="mx-auto mb-4 w-12 h-12 text-red-500" />
-        <h2 className="text-xl font-bold text-red-700 dark:text-red-400">System Unavailable</h2>
-        <p className="text-red-600/80 dark:text-red-400/70 max-w-md mx-auto">
-          We couldn&apos;t connect to the Tax Engine. Please check your configuration.
+        <h2 className="text-xl font-bold text-red-700 dark:text-red-400">Tax Engine Connection Failed</h2>
+        <p className="text-red-600/80 dark:text-red-400/70 text-sm mt-2">
+          We couldn&apos;t establish a secure connection with the Marketplace Tax service. 
+          Please verify your <code>TAX_APP_URL</code> and <code>TAX_APP_SECRET</code> configuration.
         </p>
       </div>
     );
@@ -117,8 +118,8 @@ export default async function TaxCompliancePage() {
         </div>
         <div className="bg-[var(--bg-card)] px-6 py-4 rounded-2xl border border-[var(--border-color)] shadow-sm flex items-center gap-6 relative overflow-hidden">
           {hasActiveOverride && (
-              <div className="absolute top-0 right-0 bg-terracotta text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg">
-                  PROMO RATE
+              <div className="absolute top-0 right-0 bg-terracotta text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase">
+                  Promo Active
               </div>
           )}
           <div>
@@ -167,14 +168,19 @@ export default async function TaxCompliancePage() {
 
       {!vendor ? (
         /* Syncing State */
-        <div className="max-w-4xl mx-auto py-20 text-center bg-[var(--bg-card)] rounded-3xl border border-[var(--border-color)] shadow-sm mt-8">
-          <div className="mb-6 p-4 bg-terracotta/10 text-terracotta rounded-full w-fit mx-auto animate-bounce">
+        <div className="max-w-4xl mx-auto py-20 text-center bg-[var(--bg-card)] rounded-3xl border border-[var(--border-color)] shadow-sm mt-8 border-dashed border-terracotta/30">
+          <div className="mb-6 p-4 bg-terracotta/10 text-terracotta rounded-full w-fit mx-auto animate-pulse">
              <Receipt size={48} />
           </div>
           <h2 className="text-2xl font-serif font-bold mb-2">Syncing Your Brand...</h2>
-          <p className="text-[var(--text-secondary)] max-w-md mx-auto leading-relaxed">
-            Your individual brand portal is being prepared. Payout history and detailed metrics will appear here once your store processes its first order or during the next system sync.
+          <p className="text-[var(--text-secondary)] max-w-md mx-auto leading-relaxed text-sm">
+            Your individual brand portal is being prepared for <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-terracotta">{brandSlug}</code>. 
+            Detailed metrics and the <strong>{settings.defaultCommissionRate}%</strong> promo rate will appear here once your store processes its first order or after the next system sync.
           </p>
+          <div className="mt-8 pt-8 border-t border-[var(--border-color)] flex justify-center gap-8 text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)]">
+              <div className="flex items-center gap-1.5"><Clock size={12}/> Auto-sync active</div>
+              <div className="flex items-center gap-1.5"><CheckCircle size={12}/> Compliance ready</div>
+          </div>
         </div>
       ) : (
         /* Metrics & Transactions */
