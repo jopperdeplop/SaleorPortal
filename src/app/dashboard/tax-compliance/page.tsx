@@ -152,8 +152,8 @@ export default async function TaxCompliancePage() {
           <div>
               <h4 className="font-bold mb-1.5">How Fees are Calculated</h4>
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-3xl">
-                  Platform commissions are calculated based on the <strong>Net Sale amount (excluding VAT)</strong>. 
-                  This ensures that marketplace fees are only applied to your actual earnings, not the tax collected on behalf of the government.
+                  Platform commissions are calculated based on the <strong>Gross Sale amount (including VAT)</strong>. 
+                  This follows the industry standard used by major marketplaces like Amazon and bol.com.
               </p>
           </div>
       </div>
@@ -208,7 +208,7 @@ export default async function TaxCompliancePage() {
                 <thead className="bg-stone-50/30 dark:bg-stone-950/70 text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-widest">
                   <tr>
                     <th className="px-8 py-5">Reference</th>
-                    <th className="px-8 py-5">Revenue (Net)</th>
+                    <th className="px-8 py-5">Revenue (Gross)</th>
                     <th className="px-8 py-5">Rate</th>
                     <th className="px-8 py-5">Formula</th>
                     <th className="px-8 py-5">Fee Charged</th>
