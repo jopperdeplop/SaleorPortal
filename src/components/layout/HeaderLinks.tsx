@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ClipboardList, Sparkles, Settings, LayoutDashboard, Package, ShoppingBag, Plug, Receipt } from 'lucide-react';
+import { ClipboardList, Sparkles, Settings, LayoutDashboard, Package, ShoppingBag, Plug, Receipt, LucideIcon } from 'lucide-react';
 import { ReactNode } from "react";
 
 interface NavLinkProps {
     href: string;
     children: ReactNode;
-    icon: any;
+    icon: LucideIcon;
     isActive?: boolean;
 }
 
