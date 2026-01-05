@@ -8,6 +8,10 @@ interface Commission {
   commissionNet?: number;
   commissionVat?: number;
   orderGrossTotal?: number;
+  orderVatTotal?: number;
+  orderVatRate?: number;
+  destinationCountry?: string;
+  isOss?: boolean;
   rate?: number;
   status: string;
   createdAt: string;
@@ -107,6 +111,18 @@ export default async function TaxCompliancePage() {
 
   const { vendor, commissions, invoices, settings } = data!;
   
+  // OSS Logic: Group by country for easy tax filing
+  const ossSummary = commissions.reduce((acc, comm) => {
+    const country = comm.destinationCountry || "Internal";
+    if (!acc[country]) {
+      acc[country] = { gross: 0, vat: 0, orders: 0 };
+    }
+    acc[country].gross += Number(comm.orderGrossTotal || 0);
+    acc[country].vat += Number(comm.orderVatTotal || 0);
+    acc[country].orders += 1;
+    return acc;
+  }, {} as Record<string, { gross: number, vat: number, orders: number }>);
+
   const now = new Date();
   const hasActiveOverride = vendor?.temporaryCommissionEndsAt && new Date(vendor.temporaryCommissionEndsAt) > now;
   const effectiveRate = vendor 
@@ -118,8 +134,8 @@ export default async function TaxCompliancePage() {
       {/* Header - Always Visible */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold tracking-tight">Tax & Invoices</h1>
-          <p className="text-[var(--text-secondary)]">Manage your VAT compliance and commission statements.</p>
+          <h1 className="text-3xl font-serif font-bold tracking-tight">Tax & Compliance</h1>
+          <p className="text-[var(--text-secondary)]">Automated EU marketplace fiscal reporting for <strong>{vendor?.brandName || brandSlug}</strong>.</p>
         </div>
         <div className="bg-[var(--bg-card)] px-6 py-4 rounded-2xl border border-[var(--border-color)] shadow-sm flex items-center gap-6 relative overflow-hidden">
           {hasActiveOverride && (
@@ -149,7 +165,7 @@ export default async function TaxCompliancePage() {
           </div>
           <div className="h-10 w-px bg-[var(--border-color)]"></div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Status</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Tax Identity</div>
             <div className={`text-lg font-bold flex items-center gap-1.5 ${vendor ? "text-green-600 dark:text-green-500" : "text-amber-500"}`}>
               {vendor ? <><CheckCircle size={18} /> {vendor.countryCode} Verified</> : <><Clock size={18} /> Pending Sync</>}
             </div>
@@ -157,105 +173,106 @@ export default async function TaxCompliancePage() {
         </div>
       </div>
 
-      {/* Calculation Explainer - Always Visible */}
-      <div className="bg-[var(--bg-card)] border border-[var(--border-color)] p-6 rounded-3xl flex gap-5 items-start">
-          <div className="p-2.5 bg-terracotta/10 text-terracotta rounded-xl flex-shrink-0">
-             <AlertCircle size={22} />
-          </div>
-          <div>
-              <h4 className="font-bold mb-1.5">How Fees are Calculated</h4>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-3xl">
-                  Platform commissions are calculated based on the <strong>Gross Sale amount (including VAT)</strong>. 
-                  This follows the industry standard used by major marketplaces like Amazon and bol.com.
-              </p>
-          </div>
-      </div>
-
       {!vendor ? (
         /* Syncing State */
-        <div className="max-w-4xl mx-auto py-20 text-center bg-[var(--bg-card)] rounded-3xl border border-[var(--border-color)] shadow-sm mt-8 border-dashed border-terracotta/30">
+        <div className="max-w-4xl mx-auto py-20 text-center bg-[var(--bg-card)] rounded-3xl border border-[var(--border-color)] shadow-sm border-dashed border-terracotta/30">
           <div className="mb-6 p-4 bg-terracotta/10 text-terracotta rounded-full w-fit mx-auto animate-pulse">
              <Receipt size={48} />
           </div>
           <h2 className="text-2xl font-serif font-bold mb-2">Syncing Your Brand...</h2>
           <p className="text-[var(--text-secondary)] max-w-md mx-auto leading-relaxed text-sm">
             Your individual brand portal is being prepared for <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-terracotta">{brandSlug}</code>. 
-            Detailed metrics and the <strong>{settings.defaultCommissionRate}%</strong> promo rate will appear here once your store processes its first order or after the next system sync.
+            Detailed EU tax metrics and the <strong>{settings.defaultCommissionRate}%</strong> rate will appear here once your store processes its first order.
           </p>
-          <div className="mt-8 pt-8 border-t border-[var(--border-color)] flex justify-center gap-8 text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)]">
-              <div className="flex items-center gap-1.5"><Clock size={12}/> Auto-sync active</div>
-              <div className="flex items-center gap-1.5"><CheckCircle size={12}/> Compliance ready</div>
-          </div>
         </div>
       ) : (
-        /* Metrics & Transactions */
+        /* Expert Reporting Panels */
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Total Fees Card */}
             <div className="bg-[var(--bg-card)] p-8 rounded-3xl border border-[var(--border-color)] shadow-sm relative group overflow-hidden transition-all hover:border-terracotta/30">
               <div className="absolute top-0 left-0 w-1 h-full bg-terracotta opacity-20 group-hover:opacity-100 transition-opacity"></div>
               <div className="flex items-center gap-3 mb-5 text-terracotta">
                 <Receipt size={24} />
-                <span className="text-xs font-bold uppercase tracking-widest opacity-80">Total Marketplace Fees</span>
+                <span className="text-xs font-bold uppercase tracking-widest opacity-80">Marketplace Fees</span>
               </div>
               <div className="flex items-baseline gap-1">
                  <span className="text-4xl font-bold">€{commissions.reduce((acc, c) => acc + Number(c.commissionAmount), 0).toFixed(2)}</span>
               </div>
-              <p className="text-xs text-[var(--text-secondary)] mt-4 font-medium uppercase tracking-tight">Total platform deductions to date</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-4 font-medium uppercase tracking-tight">Total platform commission & VAT</p>
             </div>
 
-            <div className="bg-[var(--bg-card)] p-8 rounded-3xl border border-[var(--border-color)] shadow-sm relative group overflow-hidden transition-all hover:border-blue-500/30">
-               <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 opacity-20 group-hover:opacity-100 transition-opacity"></div>
-              <div className="flex items-center gap-3 mb-5 text-blue-500">
-                <Clock size={24} />
-                <span className="text-xs font-bold uppercase tracking-widest opacity-80">Processing Settlements</span>
-              </div>
-              <span className="text-4xl font-bold">
-                {commissions.filter((c) => c.status === 'PENDING').length}
-              </span>
-              <p className="text-xs text-[var(--text-secondary)] mt-4 font-medium uppercase tracking-tight">Orders currently being reconciled</p>
+            {/* Tax Intelligence Panel (Expert Feature) */}
+            <div className="xl:col-span-2 bg-[var(--bg-card)] p-6 rounded-3xl border border-[var(--border-color)] shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3 text-blue-500">
+                        <CheckCircle size={20} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest">Tax Intelligence: OSS Summary</span>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {Object.entries(ossSummary).length === 0 ? (
+                        <div className="col-span-4 py-4 text-center text-xs text-[var(--text-secondary)] italic">
+                            Awaiting first transactions for country-based reporting.
+                        </div>
+                    ) : (
+                        Object.entries(ossSummary).map(([country, stats]) => (
+                            <div key={country} className="bg-stone-50/50 dark:bg-stone-900/40 p-3 rounded-2xl border border-[var(--border-color)]">
+                                <div className="text-[9px] font-bold text-[var(--text-secondary)] uppercase mb-1">{country} Sales</div>
+                                <div className="text-sm font-bold">€{stats.gross.toFixed(2)}</div>
+                                <div className="text-[9px] text-stone-400 mt-1">VAT: €{stats.vat.toFixed(2)}</div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
           </div>
 
           <section className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border-color)] shadow-sm overflow-hidden border-t-2 border-t-terracotta/20">
             <div className="px-8 py-7 border-b border-[var(--border-color)] bg-stone-50/10 dark:bg-stone-950/20">
-              <h2 className="text-xl font-bold font-serif">Financial Records</h2>
-              <p className="text-[10px] text-[var(--text-secondary)] mt-1.5 uppercase tracking-widest font-bold">Detailed breakdown of gross revenue vs marketplace commission</p>
+              <h2 className="text-xl font-bold font-serif">Fiscal Ledger</h2>
+              <p className="text-[10px] text-[var(--text-secondary)] mt-1.5 uppercase tracking-widest font-bold">Full transparency for your quarterly VAT returns and OSS filings</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-full text-left border-collapse">
                 <thead className="text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-widest">
                   <tr className="bg-stone-50/50 dark:bg-stone-950/70">
                     <th className="px-8 py-5 border-b border-[var(--border-color)]">Reference</th>
-                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Revenue (Gross)</th>
-                    <th className="px-8 py-5 border-b border-[var(--border-color)]">Rate</th>
-                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee (Net)</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Rev. Gross</th>
+                    <th className="px-8 py-5 text-center border-b border-[var(--border-color)]">Dest.</th>
+                    <th className="px-8 py-5 text-center border-b border-[var(--border-color)]">VAT %</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee Net</th>
                     <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee Tax</th>
-                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee Charged</th>
-                    <th className="px-8 py-5 text-right font-serif invisible border-b border-[var(--border-color)]">Documents</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Net Payout Est.</th>
+                    <th className="px-8 py-5 text-right font-serif invisible border-b border-[var(--border-color)]">Docs</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {commissions.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-8 py-20 text-center text-[var(--text-secondary)] italic font-serif text-lg">
-                        No financial history found for this brand yet.
+                      <td colSpan={8} className="px-8 py-20 text-center text-[var(--text-secondary)] italic font-serif text-lg">
+                        No financial record found yet.
                       </td>
                     </tr>
                   ) : (
                     commissions.map((comm) => {
                       const orderInvoices = invoices.filter(inv => inv.orderId === comm.orderId.split("-")[0]);
+                      const payoutEst = Number(comm.orderGrossTotal || 0) - Number(comm.commissionAmount);
                       return (
                         <tr key={comm.id} className="hover:bg-stone-50/20 dark:hover:bg-stone-800/40 transition-colors group">
                           <td className="px-8 py-6 font-mono text-xs font-bold">
                             <span className="opacity-40 mr-0.5">ORD-</span>{comm.orderId.split("-")[0]}
                           </td>
                           <td className="px-8 py-6 text-sm font-semibold text-right">
-                            €{comm.orderGrossTotal ? Number(comm.orderGrossTotal).toFixed(2) : '0.00'}
+                            €{Number(comm.orderGrossTotal || 0).toFixed(2)}
                           </td>
-                          <td className="px-8 py-6">
-                            <span className="px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-[10px] font-bold border border-[var(--border-color)]">
-                                {comm.rate || '0'}%
+                          <td className="px-8 py-6 text-center">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-[var(--border-color)]">
+                                {comm.destinationCountry || vendor.countryCode}
                             </span>
+                          </td>
+                          <td className="px-8 py-6 text-center text-[10px] font-bold text-[var(--text-secondary)]">
+                            {comm.orderVatRate ? `${comm.orderVatRate.toFixed(1)}%` : '—'}
                           </td>
                           <td className="px-8 py-6 text-[10px] font-mono text-[var(--text-secondary)] font-medium text-right">
                             €{Number(comm.commissionNet || 0).toFixed(2)}
@@ -263,8 +280,8 @@ export default async function TaxCompliancePage() {
                           <td className="px-8 py-6 text-[10px] font-mono text-[var(--text-secondary)] font-medium text-right">
                             {Number(comm.commissionVat) > 0 ? `€${Number(comm.commissionVat).toFixed(2)}` : 'REV. CHARGE'}
                           </td>
-                          <td className="px-8 py-6 font-bold text-sm text-terracotta text-right">
-                            -€{Number(comm.commissionAmount).toFixed(2)}
+                          <td className="px-8 py-6 font-bold text-sm text-[var(--text-primary)] text-right">
+                             €{payoutEst.toFixed(2)}
                           </td>
                           <td className="px-8 py-6 text-right">
                             <div className="flex flex-col items-end gap-1.5">
@@ -279,7 +296,7 @@ export default async function TaxCompliancePage() {
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-terracotta hover:text-[var(--text-primary)] transition-colors border border-terracotta/20 px-2 py-1 rounded-md hover:bg-terracotta/5"
                                   >
-                                    <Download size={10} /> {inv.type === 'CUSTOMER' ? 'Receipt' : 'Statement'}
+                                    <Download size={10} /> {inv.type === 'CUSTOMER' ? 'Receipt' : 'Fee Statement'}
                                   </a>
                                 ))
                               )}
