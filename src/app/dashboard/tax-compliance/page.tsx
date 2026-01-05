@@ -4,8 +4,10 @@ import { Receipt, Download, AlertCircle, CheckCircle, Clock } from "lucide-react
 interface Commission {
   id: string;
   orderId: string;
-  amount: number;
-  orderGross?: number;
+  commissionAmount: number;
+  commissionNet?: number;
+  commissionVat?: number;
+  orderGrossTotal?: number;
   rate?: number;
   status: string;
   createdAt: string;
@@ -23,11 +25,14 @@ interface VendorData {
   vendor: {
     brandName: string;
     commissionRate: number;
+    countryCode: string;
+    vatNumber?: string | null;
     temporaryCommissionRate?: number | null;
     temporaryCommissionEndsAt?: string | null;
   } | null;
   settings: {
     defaultCommissionRate: number;
+    companyName: string;
   };
   commissions: Commission[];
   invoices: Invoice[];
@@ -48,7 +53,7 @@ async function getTaxData(brandSlug: string): Promise<VendorData> {
     fetch(`${taxAppUrl}/api/settings`, { headers: authHeader, next: { revalidate: 60 } })
   ]);
 
-  const settings = settingsRes.ok ? await settingsRes.json() : { defaultCommissionRate: 10.0 };
+  const settings = settingsRes.ok ? await settingsRes.json() : { defaultCommissionRate: 10.0, companyName: "Saleor Platform" };
   let vendorData = null;
 
   if (vendorRes.ok) {
@@ -146,7 +151,7 @@ export default async function TaxCompliancePage() {
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Status</div>
             <div className={`text-lg font-bold flex items-center gap-1.5 ${vendor ? "text-green-600 dark:text-green-500" : "text-amber-500"}`}>
-              {vendor ? <><CheckCircle size={18} /> Verified</> : <><Clock size={18} /> Pending Sync</>}
+              {vendor ? <><CheckCircle size={18} /> {vendor.countryCode} Verified</> : <><Clock size={18} /> Pending Sync</>}
             </div>
           </div>
         </div>
@@ -193,7 +198,7 @@ export default async function TaxCompliancePage() {
                 <span className="text-xs font-bold uppercase tracking-widest opacity-80">Total Marketplace Fees</span>
               </div>
               <div className="flex items-baseline gap-1">
-                 <span className="text-4xl font-bold">€{commissions.reduce((acc, c) => acc + Number(c.amount), 0).toFixed(2)}</span>
+                 <span className="text-4xl font-bold">€{commissions.reduce((acc, c) => acc + Number(c.commissionAmount), 0).toFixed(2)}</span>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mt-4 font-medium uppercase tracking-tight">Total platform deductions to date</p>
             </div>
@@ -217,21 +222,22 @@ export default async function TaxCompliancePage() {
               <p className="text-[10px] text-[var(--text-secondary)] mt-1.5 uppercase tracking-widest font-bold">Detailed breakdown of gross revenue vs marketplace commission</p>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-stone-50/30 dark:bg-stone-950/70 text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-widest">
-                  <tr>
-                    <th className="px-8 py-5">Reference</th>
-                    <th className="px-8 py-5">Revenue (Gross)</th>
-                    <th className="px-8 py-5">Rate</th>
-                    <th className="px-8 py-5">Formula</th>
-                    <th className="px-8 py-5">Fee Charged</th>
-                    <th className="px-8 py-5 text-right font-serif invisible">Documents</th>
+              <table className="w-full min-w-full text-left border-collapse">
+                <thead className="text-[var(--text-secondary)] text-[10px] font-bold uppercase tracking-widest">
+                  <tr className="bg-stone-50/50 dark:bg-stone-950/70">
+                    <th className="px-8 py-5 border-b border-[var(--border-color)]">Reference</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Revenue (Gross)</th>
+                    <th className="px-8 py-5 border-b border-[var(--border-color)]">Rate</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee (Net)</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee Tax</th>
+                    <th className="px-8 py-5 text-right border-b border-[var(--border-color)]">Fee Charged</th>
+                    <th className="px-8 py-5 text-right font-serif invisible border-b border-[var(--border-color)]">Documents</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {commissions.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-8 py-20 text-center text-[var(--text-secondary)] italic font-serif text-lg">
+                      <td colSpan={7} className="px-8 py-20 text-center text-[var(--text-secondary)] italic font-serif text-lg">
                         No financial history found for this brand yet.
                       </td>
                     </tr>
@@ -243,19 +249,22 @@ export default async function TaxCompliancePage() {
                           <td className="px-8 py-6 font-mono text-xs font-bold">
                             <span className="opacity-40 mr-0.5">ORD-</span>{comm.orderId.split("-")[0]}
                           </td>
-                          <td className="px-8 py-6 text-sm font-semibold">
-                            €{comm.orderGross ? Number(comm.orderGross).toFixed(2) : '0.00'}
+                          <td className="px-8 py-6 text-sm font-semibold text-right">
+                            €{comm.orderGrossTotal ? Number(comm.orderGrossTotal).toFixed(2) : '0.00'}
                           </td>
                           <td className="px-8 py-6">
                             <span className="px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-[10px] font-bold border border-[var(--border-color)]">
                                 {comm.rate || '0'}%
                             </span>
                           </td>
-                          <td className="px-8 py-6 text-[10px] font-mono text-[var(--text-secondary)] font-medium">
-                            {Number(comm.orderGross || 0).toFixed(2)} × {(comm.rate || 0)}%
+                          <td className="px-8 py-6 text-[10px] font-mono text-[var(--text-secondary)] font-medium text-right">
+                            €{Number(comm.commissionNet || 0).toFixed(2)}
                           </td>
-                          <td className="px-8 py-6 font-bold text-sm text-terracotta group-hover:pl-4 transition-all origin-left">
-                            -€{Number(comm.amount).toFixed(2)}
+                          <td className="px-8 py-6 text-[10px] font-mono text-[var(--text-secondary)] font-medium text-right">
+                            {Number(comm.commissionVat) > 0 ? `€${Number(comm.commissionVat).toFixed(2)}` : 'REV. CHARGE'}
+                          </td>
+                          <td className="px-8 py-6 font-bold text-sm text-terracotta text-right">
+                            -€{Number(comm.commissionAmount).toFixed(2)}
                           </td>
                           <td className="px-8 py-6 text-right">
                             <div className="flex flex-col items-end gap-1.5">
@@ -270,7 +279,7 @@ export default async function TaxCompliancePage() {
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-terracotta hover:text-[var(--text-primary)] transition-colors border border-terracotta/20 px-2 py-1 rounded-md hover:bg-terracotta/5"
                                   >
-                                    <Download size={10} /> {inv.type === 'CUSTOMER' ? 'Receipt' : 'Fee Statement'}
+                                    <Download size={10} /> {inv.type === 'CUSTOMER' ? 'Receipt' : 'Statement'}
                                   </a>
                                 ))
                               )}
