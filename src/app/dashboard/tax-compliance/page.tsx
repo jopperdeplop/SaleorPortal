@@ -123,13 +123,20 @@ export default async function TaxCompliancePage() {
           )}
           <div>
             <div className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] mb-1">Fee Rate Applied</div>
-            <div className="flex items-baseline gap-1">
-                <span className={`text-2xl font-bold ${hasActiveOverride ? "text-terracotta" : "text-[var(--text-primary)]"}`}>
-                    {effectiveRate}%
-                </span>
+            <div className="flex flex-col">
+                <div className="flex items-baseline gap-1">
+                    <span className={`text-2xl font-bold ${hasActiveOverride ? "text-terracotta" : "text-[var(--text-primary)]"}`}>
+                        {effectiveRate}%
+                    </span>
+                    {hasActiveOverride && (
+                        <span className="text-xs text-[var(--text-secondary)] line-through font-medium">
+                            {vendor?.commissionRate}%
+                        </span>
+                    )}
+                </div>
                 {hasActiveOverride && (
-                    <span className="text-xs text-[var(--text-secondary)] line-through font-medium">
-                        {vendor?.commissionRate}%
+                    <span className="text-[10px] font-bold text-terracotta/70 mt-0.5 uppercase tracking-tighter">
+                        Ends {new Date(vendor!.temporaryCommissionEndsAt!).toLocaleDateString()}
                     </span>
                 )}
             </div>
