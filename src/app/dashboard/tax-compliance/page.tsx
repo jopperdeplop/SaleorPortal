@@ -209,6 +209,22 @@ export default async function TaxCompliancePage() {
                         <CheckCircle size={20} />
                         <span className="text-[10px] font-bold uppercase tracking-widest">Tax Intelligence: OSS Summary</span>
                     </div>
+                    <div className="flex gap-2">
+                         <a 
+                            href={`${process.env.TAX_APP_URL}/api/export?brandSlug=${brandSlug}&type=oss`}
+                            target="_blank"
+                            className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-blue-500 hover:text-[var(--text-primary)] transition-colors border border-blue-500/20 px-2 py-1 rounded-md hover:bg-blue-500/5"
+                        >
+                            <Download size={10} /> Export OSS CSV
+                        </a>
+                        <a 
+                            href={`${process.env.TAX_APP_URL}/api/export?brandSlug=${brandSlug}&type=commissions`}
+                            target="_blank"
+                            className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-stone-500 hover:text-[var(--text-primary)] transition-colors border border-stone-500/20 px-2 py-1 rounded-md hover:bg-stone-500/5"
+                        >
+                            <Download size={10} /> Export Ledger
+                        </a>
+                    </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {Object.entries(ossSummary).length === 0 ? (
