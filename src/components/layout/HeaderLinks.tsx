@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ClipboardList, Sparkles, Settings, LayoutDashboard, Package, ShoppingBag, Plug } from 'lucide-react';
+import { ClipboardList, Sparkles, Settings, LayoutDashboard, Package, ShoppingBag, Plug, Receipt } from 'lucide-react';
 import { ReactNode } from "react";
 
 interface NavLinkProps {
@@ -78,6 +78,9 @@ export function VendorLinks() {
             </NavLink>
             <NavLink href="/dashboard/integrations" icon={Plug} isActive={pathname.startsWith('/dashboard/integrations')}>
                 Integrations
+            </NavLink>
+            <NavLink href="/dashboard/tax-compliance" icon={Receipt} isActive={pathname === '/dashboard/tax-compliance'}>
+                Tax & Invoices
             </NavLink>
             <NavLink href="/dashboard/settings" icon={Settings} isActive={pathname === '/dashboard/settings'}>
                 Shop Settings
