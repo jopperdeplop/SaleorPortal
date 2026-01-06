@@ -173,17 +173,16 @@ export default async function TaxCompliancePage() {
         </div>
       </div>
 
-      {!vendor ? (
-        /* Syncing State */
-        <div className="max-w-4xl mx-auto py-20 text-center bg-[var(--bg-card)] rounded-3xl border border-[var(--border-color)] shadow-sm border-dashed border-terracotta/30">
-          <div className="mb-6 p-4 bg-terracotta/10 text-terracotta rounded-full w-fit mx-auto animate-pulse">
-             <Receipt size={48} />
-          </div>
-          <h2 className="text-2xl font-serif font-bold mb-2">Syncing Your Brand...</h2>
-          <p className="text-[var(--text-secondary)] max-w-md mx-auto leading-relaxed text-sm">
-            Your individual brand portal is being prepared for <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-terracotta">{brandSlug}</code>. 
-            Detailed EU tax metrics and the <strong>{settings.defaultCommissionRate}%</strong> rate will appear here once your store processes its first order.
-          </p>
+      {!data?.vendor ? (
+        <div className="bg-card border border-border-custom rounded-[40px] p-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+           <div className="w-20 h-20 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-8">
+               <Receipt size={40} className="text-accent animate-pulse" />
+           </div>
+           <h2 className="text-4xl font-extrabold mb-4 tracking-tight font-serif">Syncing Your Brand...</h2>
+           <p className="text-text-secondary max-w-md mx-auto leading-relaxed text-sm lg:text-base">
+               Your individual brand portal is being prepared for <span className="text-accent font-bold">{brandSlug}</span>. 
+               Detailed EU tax metrics and the <span className="text-accent font-bold">10%</span> rate will appear here once your store processes its first order, or after the next automated sync.
+           </p>
         </div>
       ) : (
         /* Expert Reporting Panels */
@@ -284,7 +283,7 @@ export default async function TaxCompliancePage() {
                           </td>
                           <td className="px-8 py-6 text-center">
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-[var(--border-color)]">
-                                {comm.destinationCountry || vendor.countryCode}
+                                {comm.destinationCountry || vendor?.countryCode || "NL"}
                             </span>
                           </td>
                           <td className="px-8 py-6 text-center text-[10px] font-bold text-[var(--text-secondary)]">
@@ -302,7 +301,13 @@ export default async function TaxCompliancePage() {
                           <td className="px-8 py-6 text-right">
                             <div className="flex flex-col items-end gap-1.5">
                               {orderInvoices.length === 0 ? (
-                                <span className="text-[9px] text-[var(--text-secondary)] uppercase font-bold tracking-tighter italic">Processing...</span>
+                                <a 
+                                  href={`${process.env.TAX_APP_URL}/api/export?orderId=${comm.orderId}&type=receipt`}
+                                  target="_blank"
+                                  className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase text-blue-500 hover:text-[var(--text-primary)] transition-colors border border-blue-500/20 px-2 py-1 rounded-md hover:bg-blue-500/5"
+                                >
+                                  <Download size={10} /> Generate Receipt
+                                </a>
                               ) : (
                                 orderInvoices.map((inv) => (
                                   <a 
