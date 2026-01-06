@@ -49,6 +49,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 });
                 if (!user) return null;
 
+                // 3. Block Admin Access (Admin should only use hub.salp.shop)
+                if (user.role === 'admin') {
+                    throw new Error("ADMIN_NOT_ALLOWED");
+                }
+
                 // 2. Check password
                 const passwordsMatch = await bcrypt.compare(password, user.password);
                 if (!passwordsMatch) return null;
