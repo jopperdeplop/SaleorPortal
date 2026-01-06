@@ -1,9 +1,9 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { ClipboardList, Sparkles, Settings, LayoutDashboard, Package, ShoppingBag, Plug, Receipt, LucideIcon } from 'lucide-react';
+import { ClipboardList, Sparkles, Settings, LayoutDashboard, Package, ShoppingBag, Plug, Receipt, LucideIcon, ExternalLink } from 'lucide-react';
 import { ReactNode } from "react";
 
 interface NavLinkProps {
@@ -31,34 +31,16 @@ function NavLink({ href, children, icon: Icon, isActive }: NavLinkProps) {
 }
 
 export function AdminLinks() {
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const activeTab = searchParams.get('tab') || 'applications';
-
     return (
-        <>
-            <NavLink 
-                href="/admin?tab=applications" 
-                icon={ClipboardList}
-                isActive={pathname === '/admin' && activeTab === 'applications'}
-            >
-                Applications
-            </NavLink>
-            <NavLink 
-                href="/admin?tab=features" 
-                icon={Sparkles}
-                isActive={pathname === '/admin' && activeTab === 'features'}
-            >
-                Feature Requests
-            </NavLink>
-            <NavLink 
-                href="/admin/settings" 
-                icon={Settings}
-                isActive={pathname === '/admin/settings'}
-            >
-                Admin Settings
-            </NavLink>
-        </>
+        <a 
+            href="https://hub.salp.shop" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 py-1 px-2 rounded-lg transition-all text-sm font-medium text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+        >
+            <ExternalLink className="w-4 h-4" />
+            Central Hub
+        </a>
     );
 }
 

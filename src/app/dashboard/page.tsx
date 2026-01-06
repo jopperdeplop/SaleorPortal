@@ -32,7 +32,7 @@ export default async function DashboardPage({
 
     const session = await auth();
     if (session?.user?.role === 'admin') {
-        redirect('/admin');
+        redirect('https://hub.salp.shop');
     }
     const brand = session?.user?.brand || 'Nike';
 
