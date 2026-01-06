@@ -4,9 +4,10 @@ import { eq } from 'drizzle-orm';
 import { updateShopSettings } from '@/app/actions/settings';
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
-import { Paintbrush } from "lucide-react";
+import { Paintbrush, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SubmitButton } from "@/components/SubmitButton";
+import { TwoFactorSetup } from "./TwoFactorSetup";
 
 export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ success?: string }> }) {
     const { success } = await searchParams;
@@ -147,6 +148,18 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                     </form>
                 </div>
             </div>
+
+            {/* Security */}
+            <section className="mt-12 space-y-4">
+                <div className="flex items-center gap-3 text-terracotta border-b border-vapor dark:border-border pb-2">
+                    <ShieldCheck className="w-5 h-5" />
+                    <h2 className="text-xl font-serif text-carbon dark:text-white">Security</h2>
+                </div>
+                <div className="bg-white dark:bg-card p-6 rounded-lg border border-vapor dark:border-border shadow-sm">
+                    <TwoFactorSetup enabled={user.twoFactorEnabled ?? false} />
+                </div>
+            </section>
+
             {/* Appearance */}
             <section className="space-y-4">
                 <div className="flex items-center gap-3 text-terracotta border-b border-vapor dark:border-border pb-2">

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
+import { pgTable, text, serial, timestamp, jsonb, integer, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
@@ -10,6 +10,10 @@ export const users = pgTable('users', {
     vatNumber: text('vat_number'),
     warehouseAddress: jsonb('warehouse_address'), // { street, city, zip, country }
     shippingCountries: jsonb('shipping_countries').default([]), // Array of country codes e.g. ['NL', 'BE', 'DE']
+    twoFactorSecret: text('two_factor_secret'),
+    twoFactorEnabled: boolean('two_factor_enabled').default(false).notNull(),
+    resetToken: text('reset_token'),
+    resetTokenExpiry: timestamp('reset_token_expiry'),
     createdAt: timestamp('created_at').defaultNow(),
 });
 

@@ -2,6 +2,8 @@ import { db } from '@/db';
 import { vendorApplications, users } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { hash } from 'bcryptjs';
+import crypto from 'crypto';
+import { sendInviteEmail } from '@/lib/mail';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,24 +53,33 @@ export async function POST(request: Request) {
     if (app.status !== 'pending') return new Response('Application already processed', { status: 400 });
 
     if (action === 'approve') {
-      const tempPassword = 'password123'; 
-      const hashedPassword = await hash(tempPassword, 10);
+      // 1. Generate a secure setup token
+      const setupToken = crypto.randomBytes(32).toString('hex');
+      const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+      // 2. Create the user with a locked state (random long password)
+      const lockedPassword = await hash(crypto.randomBytes(64).toString('hex'), 10);
 
       await db.insert(users).values({
           name: app.companyName,
           email: app.email,
-          password: hashedPassword,
+          password: lockedPassword,
           brand: app.companyName,
           role: 'vendor',
           vatNumber: app.vatNumber,
           warehouseAddress: app.warehouseAddress,
+          resetToken: setupToken,
+          resetTokenExpiry: tokenExpiry,
       });
+
+      // 3. Send the invite email
+      await sendInviteEmail(app.email, app.companyName, setupToken);
 
       await db.update(vendorApplications)
           .set({ status: 'approved', processedAt: new Date() })
           .where(eq(vendorApplications.id, id));
 
-      return Response.json({ message: 'Application approved' });
+      return Response.json({ message: 'Application approved & invitation sent' });
     } else {
       await db.update(vendorApplications)
           .set({ status: 'rejected', processedAt: new Date() })
