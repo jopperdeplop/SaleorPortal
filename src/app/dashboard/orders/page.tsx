@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 
+import { Suspense } from "react";
 import OrderFilters from "@/components/dashboard/OrderFilters";
 
 export default async function OrdersPage({
@@ -21,7 +22,7 @@ export default async function OrdersPage({
 
     // Default to Last 14 Days if NO dates are provided
     let startDate: Date | undefined = startDateStr ? new Date(startDateStr) : undefined;
-    let endDate: Date | undefined = endDateStr ? new Date(endDateStr) : undefined;
+    const endDate: Date | undefined = endDateStr ? new Date(endDateStr) : undefined;
 
     if (!startDate && !endDate) {
         const now = new Date();
@@ -46,7 +47,9 @@ export default async function OrdersPage({
                 <h1 className="text-3xl font-serif font-bold text-carbon dark:text-white">Orders</h1>
             </div>
 
-            <OrderFilters defaultStartDate={startDate} defaultEndDate={endDate} />
+            <Suspense fallback={<div className="h-20 animate-pulse bg-stone-100 dark:bg-stone-900 rounded-xl" />}>
+                <OrderFilters defaultStartDate={startDate} defaultEndDate={endDate} />
+            </Suspense>
 
             <div className="bg-white dark:bg-card rounded-xl shadow-sm border border-vapor dark:border-border overflow-hidden">
                 <table className="w-full text-left border-collapse">

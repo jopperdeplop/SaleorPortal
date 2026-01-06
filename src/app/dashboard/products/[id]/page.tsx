@@ -3,6 +3,7 @@ import { getVendorProduct } from "@/lib/api/client";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Tag, Layers, ImageIcon } from "lucide-react";
+import { Suspense } from "react";
 import ProductLanguageSelector from "@/components/products/ProductLanguageSelector";
 import ProductOverridesSection from "@/components/products/ProductOverridesSection";
 import { db } from "@/db";
@@ -92,7 +93,9 @@ export default async function ProductDetailsPage({
                         <label className="block text-xs font-semibold text-stone-400 uppercase mb-1.5 ml-1">
                             Editing Language
                         </label>
-                        <ProductLanguageSelector availableLanguages={product.availableLanguages} />
+                        <Suspense fallback={<div className="h-10 w-48 animate-pulse bg-stone-100 rounded-lg" />}>
+                            <ProductLanguageSelector availableLanguages={product.availableLanguages} />
+                        </Suspense>
                     </div>
                 </div>
             </div>

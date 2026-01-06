@@ -4,6 +4,7 @@ import { DollarSign, Package, TrendingUp, Eye } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import OrderFilters from "@/components/dashboard/OrderFilters";
 
@@ -21,7 +22,7 @@ export default async function DashboardPage({
 
     // Default to Last 14 Days if NO dates are provided
     let startDate: Date | undefined = startDateStr ? new Date(startDateStr) : undefined;
-    let endDate: Date | undefined = endDateStr ? new Date(endDateStr) : undefined;
+    const endDate: Date | undefined = endDateStr ? new Date(endDateStr) : undefined;
 
     if (!startDate && !endDate) {
         const now = new Date();
@@ -44,7 +45,7 @@ export default async function DashboardPage({
         <div className="space-y-8">
             <header>
                 <h2 className="text-3xl font-serif text-carbon mb-2">Dashboard</h2>
-                <p className="text-stone-500">Welcome back, here's what's happening today.</p>
+                <p className="text-stone-500">Welcome back, here&apos;s what&apos;s happening today.</p>
             </header>
 
 
@@ -80,7 +81,9 @@ export default async function DashboardPage({
                 </div>
             </div>
 
-            <OrderFilters defaultStartDate={startDate} defaultEndDate={endDate} />
+            <Suspense fallback={<div className="h-20 animate-pulse bg-stone-100 rounded-2xl" />}>
+                <OrderFilters defaultStartDate={startDate} defaultEndDate={endDate} />
+            </Suspense>
 
             {/* Recent Orders */}
             <section className="bg-white dark:bg-card border border-vapor dark:border-border rounded-lg shadow-sm overflow-hidden">
