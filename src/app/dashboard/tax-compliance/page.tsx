@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { Receipt, Download, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { Receipt, Download, AlertCircle, CheckCircle, Clock, TrendingUp } from "lucide-react";
 
 interface Commission {
   id: string;
@@ -199,6 +199,21 @@ export default async function TaxCompliancePage() {
                  <span className="text-4xl font-bold">€{commissions.reduce((acc, c) => acc + Number(c.commissionAmount), 0).toFixed(2)}</span>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mt-4 font-medium uppercase tracking-tight">Total platform commission & VAT</p>
+            </div>
+
+            {/* Net Payout Card (New Expert Metric) */}
+            <div className="bg-[var(--bg-card)] p-8 rounded-3xl border border-[var(--border-color)] shadow-sm relative group overflow-hidden transition-all hover:border-green-500/30">
+              <div className="absolute top-0 left-0 w-1 h-full bg-green-500 opacity-20 group-hover:opacity-100 transition-opacity"></div>
+              <div className="flex items-center gap-3 mb-5 text-green-500">
+                <TrendingUp size={24} />
+                <span className="text-xs font-bold uppercase tracking-widest opacity-80">Estimated Net Payout</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                 <span className="text-4xl font-bold text-green-600 dark:text-green-500">
+                    €{(commissions.reduce((acc, c) => acc + Number(c.orderGrossTotal || 0), 0) - commissions.reduce((acc, c) => acc + Number(c.commissionAmount), 0)).toFixed(2)}
+                 </span>
+              </div>
+              <p className="text-xs text-[var(--text-secondary)] mt-4 font-medium uppercase tracking-tight">Total gross volume minus fees</p>
             </div>
 
             {/* Tax Intelligence Panel (Expert Feature) */}
