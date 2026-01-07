@@ -83,13 +83,9 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
           </div>
         </div>
         {enabled ? (
-          <button
-            onClick={handleDisable}
-            disabled={loading}
-            className="px-4 py-2 text-sm font-semibold text-terracotta hover:bg-terracotta/5 rounded-lg transition-colors disabled:opacity-50"
-          >
-            Disable
-          </button>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg text-[10px] font-extrabold uppercase tracking-widest border border-green-500/20">
+            <ShieldCheck size={14} /> Enforced
+          </div>
         ) : setupStep === "idle" && (
           <button
             onClick={handleStartSetup}
