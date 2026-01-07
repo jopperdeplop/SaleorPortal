@@ -102,7 +102,7 @@ export default async function TaxCompliancePage() {
         <AlertCircle className="mx-auto mb-4 w-12 h-12 text-red-500" />
         <h2 className="text-xl font-bold text-red-700 dark:text-red-400">Tax Engine Connection Failed</h2>
         <p className="text-red-600/80 dark:text-red-400/70 text-sm mt-2">
-          We couldn&apos;t establish a secure connection with the Marketplace Tax service. 
+          We couldn{"'"}t establish a secure connection with the Marketplace Tax service. 
           Please verify your <code>TAX_APP_URL</code> and <code>TAX_APP_SECRET</code> configuration.
         </p>
       </div>
