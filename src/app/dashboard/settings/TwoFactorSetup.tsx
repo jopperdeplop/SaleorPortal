@@ -4,18 +4,23 @@ import { useState } from "react";
 import { generate2FASecret, enable2FA, disable2FA } from "@/app/actions/two-factor";
 import Image from "next/image";
 import { ShieldCheck, ShieldAlert, Loader2, QrCode, CheckCircle2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface TwoFactorSetupProps {
   enabled: boolean;
 }
 
 export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
+  const { update } = useSession();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [setupStep, setSetupStep] = useState<"idle" | "showing_qr">("idle");
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [secret, setSecret] = useState<string | null>(null);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleStartSetup = async () => {
     setLoading(true);
@@ -25,9 +30,9 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
       setQrCode(result.qrCodeUrl);
       setSecret(result.secret);
       setSetupStep("showing_qr");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setError("Failed to generate setup QR code");
+      setError(error.message || "Failed to generate setup QR code");
     } finally {
       setLoading(false);
     }
@@ -42,14 +47,21 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
       if (result.error) {
         setError(result.error);
       } else {
-        setSetupStep("idle");
-        setQrCode(null);
-        setSecret(null);
-        setCode("");
+        // Trigger session update so middleware knows 2FA is active
+        await update({ twoFactorEnabled: true });
+        setIsSuccess(true);
+        setTimeout(() => {
+          setSetupStep("idle");
+          setQrCode(null);
+          setSecret(null);
+          setCode("");
+          router.push("/dashboard");
+          router.refresh();
+        }, 1500);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setError("Verification failed");
+      setError(error.message || "Verification failed");
     } finally {
       setLoading(false);
     }
@@ -97,6 +109,13 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
           </button>
         )}
       </div>
+      
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-600 rounded-xl text-sm flex items-center gap-3 font-bold animate-in fade-in slide-in-from-top-2">
+            <ShieldAlert size={20} />
+            {error}
+        </div>
+      )}
 
       {setupStep === "showing_qr" && qrCode && (
         <div className="p-6 bg-white dark:bg-card border border-vapor dark:border-border rounded-xl shadow-lg animate-in fade-in slide-in-from-top-4">
@@ -124,21 +143,14 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
                 />
               </div>
 
-              {error && (
-                <div className="p-3 bg-red-50 border border-red-100 text-red-600 rounded-lg text-sm flex items-center gap-2">
-                  <ShieldAlert size={16} />
-                  {error}
-                </div>
-              )}
-
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleVerify}
-                  disabled={loading || code.length !== 6}
-                  className="flex-1 py-3 bg-terracotta hover:bg-terracotta-dark text-white font-bold rounded-lg transition-all shadow-md active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                  disabled={loading || code.length !== 6 || isSuccess}
+                  className={`flex-1 py-3 ${isSuccess ? 'bg-green-500' : 'bg-terracotta hover:bg-terracotta-dark'} text-white font-bold rounded-lg transition-all shadow-md active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2`}
                 >
-                  {loading ? <Loader2 size={20} className="animate-spin" /> : <CheckCircle2 size={20} />}
-                  Verify & Enable
+                  {loading ? <Loader2 size={20} className="animate-spin" /> : (isSuccess ? <CheckCircle2 size={20} /> : <CheckCircle2 size={20} />)}
+                  {isSuccess ? "Enabled!" : "Verify & Enable"}
                 </button>
                 <button
                   onClick={() => {

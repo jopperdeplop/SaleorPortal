@@ -5,7 +5,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import speakeasy from 'speakeasy';
+import { authenticator } from 'otplib';
 
 declare module "next-auth" {
     interface Session {
@@ -64,10 +64,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         throw new Error("OTP_REQUIRED");
                     }
 
-                    const verified = speakeasy.totp.verify({
-                        secret: user.twoFactorSecret!,
-                        encoding: "base32",
+                    const verified = authenticator.verify({
                         token: code,
+                        secret: user.twoFactorSecret!,
                     });
 
                     if (!verified) {
@@ -95,12 +94,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: '/login',
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id;
                 token.brand = user.brand;
                 token.role = user.role;
                 token.twoFactorEnabled = user.twoFactorEnabled;
+            }
+            // Allow manual session update
+            if (trigger === "update" && session?.twoFactorEnabled !== undefined) {
+                token.twoFactorEnabled = session.twoFactorEnabled;
             }
             return token;
         },
