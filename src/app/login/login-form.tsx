@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import { authenticate } from './actions';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Lock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -16,22 +16,18 @@ export default function LoginForm() {
     const genericError = state && !isOtpRequired && !isInvalidOtp ? state : null;
 
     return (
-        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col items-center justify-center p-6">
-            <div className="w-full max-w-md space-y-8 bg-white dark:bg-stone-900 p-8 rounded-xl border border-vapor dark:border-stone-800 shadow-sm">
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+            <div className="w-full max-w-md bg-card p-12 rounded-[40px] shadow-2xl border border-border">
 
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <Link href="/" className="text-stone-400 hover:text-carbon transition-colors">
-                        <ArrowLeft className="w-5 h-5" />
-                    </Link>
-                    <h2 className="text-2xl font-serif font-bold text-carbon">
-                        {isOtpRequired ? "Two-Factor Auth" : "Sign In"}
+                <div className="flex flex-col items-center text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-terracotta/10 text-terracotta mb-6">
+                        <Lock size={40} />
+                    </div>
+                    <h2 className="text-3xl font-serif font-bold text-carbon mb-3">
+                        {isOtpRequired ? "Verification Required" : "Vendor Sign In"}
                     </h2>
-                    <div className="w-5" /> {/* spacer */}
-                </div>
-
-                <div className="text-center">
-                    <p className="text-stone-500 text-sm">
+                    <p className="text-stone-500 text-base">
                         {isOtpRequired 
                             ? "Please enter the code from your Authenticator app." 
                             : "Enter your credentials to access the vendor portal."}
@@ -45,45 +41,41 @@ export default function LoginForm() {
                     {!isOtpRequired ? (
                         <>
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-stone-700">
-                                    Email address
+                                <label htmlFor="email" className="block text-[10px] font-extrabold uppercase tracking-widest text-stone-500 mb-3 ml-1">
+                                    Email Address
                                 </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        required
-                                        placeholder="you@company.com"
-                                        className="appearance-none block w-full px-3 py-2 border border-vapor dark:border-stone-700 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta sm:text-sm text-carbon bg-white dark:bg-stone-950 dark:text-white"
-                                    />
-                                </div>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    autoComplete="email"
+                                    required
+                                    placeholder="you@company.com"
+                                    className="w-full px-6 py-4 bg-background border border-border rounded-2xl text-carbon placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all font-bold"
+                                />
                             </div>
 
                             <div>
-                                <div className="flex items-center justify-between mb-1">
-                                    <label htmlFor="password" className="block text-sm font-medium text-stone-700">
+                                <div className="flex items-center justify-between mb-3 mx-1">
+                                    <label htmlFor="password" className="block text-[10px] font-extrabold uppercase tracking-widest text-stone-500">
                                         Password
                                     </label>
                                     <Link 
                                         href="/forgot-password"
-                                        className="text-xs text-terracotta hover:underline font-medium"
+                                        className="text-[10px] text-terracotta hover:underline font-extrabold uppercase tracking-widest"
                                     >
-                                        Forgot password?
+                                        Forgot?
                                     </Link>
                                 </div>
-                                <div className="mt-1">
-                                    <input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        autoComplete="current-password"
-                                        required
-                                        placeholder="••••••••"
-                                        className="appearance-none block w-full px-3 py-2 border border-vapor dark:border-stone-700 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta sm:text-sm text-carbon bg-white dark:bg-stone-950 dark:text-white"
-                                    />
-                                </div>
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    required
+                                    placeholder="••••••••"
+                                    className="w-full px-6 py-4 bg-background border border-border rounded-2xl text-carbon placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all font-bold"
+                                />
                             </div>
                         </>
                     ) : (
@@ -93,26 +85,24 @@ export default function LoginForm() {
                             <input type="hidden" name="password" value={(document.getElementById('password') as HTMLInputElement)?.value} />
                             
                             <div>
-                                <label htmlFor="code" className="block text-sm font-medium text-stone-700 text-center mb-2">
-                                    Verification Code
+                                <label htmlFor="code" className="block text-[10px] font-extrabold uppercase tracking-widest text-stone-500 text-center mb-4">
+                                    Security Code
                                 </label>
-                                <div className="mt-1">
-                                    <input
-                                        id="code"
-                                        name="code"
-                                        type="text"
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        autoComplete="one-time-code"
-                                        required
-                                        autoFocus
-                                        placeholder="000000"
-                                        className="appearance-none block w-full px-3 py-4 border border-vapor dark:border-stone-700 rounded-md shadow-sm placeholder-stone-400 focus:outline-none focus:ring-terracotta focus:border-terracotta text-center text-2xl tracking-[0.5em] font-mono text-carbon bg-white dark:bg-stone-950 dark:text-white"
-                                    />
-                                </div>
+                                <input
+                                    id="code"
+                                    name="code"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    autoComplete="one-time-code"
+                                    required
+                                    autoFocus
+                                    placeholder="000000"
+                                    className="w-full px-4 py-6 bg-background border border-border rounded-2xl text-center text-3xl tracking-[0.4em] font-mono text-carbon focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all"
+                                />
                                 {isInvalidOtp && (
-                                    <p className="mt-2 text-sm text-red-500 text-center font-medium">
-                                        Invalid verification code. Please try again.
+                                    <p className="mt-4 text-xs text-red-500 text-center font-bold uppercase tracking-widest">
+                                        Invalid verification code.
                                     </p>
                                 )}
                             </div>
@@ -120,32 +110,33 @@ export default function LoginForm() {
                     )}
 
                     {genericError && (
-                        <div className="text-red-500 text-sm text-center font-medium" aria-live="polite">
+                        <div className="text-red-500 text-xs text-center font-bold bg-red-500/10 p-4 rounded-xl border border-red-500/20" aria-live="polite">
                             {genericError}
                         </div>
                     )}
 
-                    <div>
+                    <div className="pt-2">
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-terracotta hover:bg-terracotta-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-terracotta transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full flex justify-center py-5 px-6 bg-terracotta hover:bg-terracotta-dark text-white font-extrabold rounded-2xl shadow-xl shadow-terracotta/20 active:scale-[0.98] disabled:opacity-50 transition-all uppercase text-xs tracking-widest"
                         >
-                            {isPending ? 'Signing in...' : (isOtpRequired ? 'Verify Code' : 'Sign in')}
+                            {isPending ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                isOtpRequired ? 'Verify Code' : 'Sign In'
+                            )}
                         </button>
                     </div>
 
-                    {isOtpRequired && (
-                        <div className="text-center mt-4">
-                            <button 
-                                type="button"
-                                onClick={() => window.location.reload()}
-                                className="text-xs text-stone-400 hover:text-terracotta transition-colors"
-                            >
-                                Use regular login
-                            </button>
-                        </div>
-                    )}
+                    <div className="text-center pt-4">
+                        <Link 
+                            href="/" 
+                            className="inline-flex items-center gap-2 text-stone-400 hover:text-carbon transition-colors text-[10px] font-extrabold uppercase tracking-widest"
+                        >
+                            <ArrowLeft className="w-3 h-3" /> Back to Storefront
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
