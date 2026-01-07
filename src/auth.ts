@@ -110,22 +110,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return token;
         },
         async session({ session, token }) {
-            if (token.id) {
-                session.user.id = token.id as string;
+            if (session.user) {
+                if (token.id) session.user.id = token.id as string;
+                if (token.brand) session.user.brand = token.brand as string;
+                if (token.role) session.user.role = token.role as string;
+                if (token.email) session.user.email = token.email as string;
+                if (token.name) session.user.name = token.name as string;
+                session.user.twoFactorEnabled = !!token.twoFactorEnabled;
             }
-            if (token.brand) {
-                session.user.brand = token.brand as string;
-            }
-            if (token.role) {
-                session.user.role = token.role as string;
-            }
-            if (token.email) {
-                session.user.email = token.email as string;
-            }
-            if (token.name) {
-                session.user.name = token.name as string;
-            }
-            session.user.twoFactorEnabled = token.twoFactorEnabled as boolean;
             return session;
         }
     }

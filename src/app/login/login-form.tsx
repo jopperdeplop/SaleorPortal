@@ -16,9 +16,9 @@ export default function LoginForm() {
     
     const [state, formAction, isPending] = useActionState(authenticate, undefined);
 
-    const isOtpRequired = state === "OTP_REQUIRED";
+    const isOtpRequired = state === "OTP_REQUIRED" || state === "INVALID_OTP";
     const isInvalidOtp = state === "INVALID_OTP";
-    const genericError = state && !isOtpRequired && !isInvalidOtp ? state : null;
+    const genericError = state && state !== "OTP_REQUIRED" && state !== "INVALID_OTP" ? state : null;
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
