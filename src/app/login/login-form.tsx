@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import { authenticate } from './actions';
 import { ArrowLeft, Lock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -9,6 +9,11 @@ import { useSearchParams } from 'next/navigation';
 export default function LoginForm() {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+    
+    // Store credentials locally to persist across 2FA transition
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    
     const [state, formAction, isPending] = useActionState(authenticate, undefined);
 
     const isOtpRequired = state === "OTP_REQUIRED";
@@ -17,14 +22,14 @@ export default function LoginForm() {
 
     return (
         <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-            <div className="w-full max-w-md bg-card p-12 rounded-[40px] shadow-2xl border border-border">
+            <div className="w-full max-w-md bg-card p-12 rounded-[40px] shadow-2xl border border-border text-carbon">
 
                 {/* Header */}
                 <div className="flex flex-col items-center text-center mb-10">
                     <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-terracotta/10 text-terracotta mb-6">
                         <Lock size={40} />
                     </div>
-                    <h2 className="text-3xl font-serif font-bold text-carbon mb-3">
+                    <h2 className="text-3xl font-serif font-bold text-carbon mb-3 italic">
                         {isOtpRequired ? "Verification Required" : "Vendor Sign In"}
                     </h2>
                     <p className="text-stone-500 text-base">
@@ -50,6 +55,8 @@ export default function LoginForm() {
                                     type="email"
                                     autoComplete="email"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@company.com"
                                     className="w-full px-6 py-4 bg-background border border-border rounded-2xl text-carbon placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all font-bold"
                                 />
@@ -73,6 +80,8 @@ export default function LoginForm() {
                                     type="password"
                                     autoComplete="current-password"
                                     required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     className="w-full px-6 py-4 bg-background border border-border rounded-2xl text-carbon placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all font-bold"
                                 />
@@ -81,10 +90,10 @@ export default function LoginForm() {
                     ) : (
                         <>
                             {/* Hidden fields to preserve credentials on second submit */}
-                            <input type="hidden" name="email" value={(document.getElementById('email') as HTMLInputElement)?.value} />
-                            <input type="hidden" name="password" value={(document.getElementById('password') as HTMLInputElement)?.value} />
+                            <input type="hidden" name="email" value={email} />
+                            <input type="hidden" name="password" value={password} />
                             
-                            <div>
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <label htmlFor="code" className="block text-[10px] font-extrabold uppercase tracking-widest text-stone-500 text-center mb-4">
                                     Security Code
                                 </label>
@@ -101,7 +110,7 @@ export default function LoginForm() {
                                     className="w-full px-4 py-6 bg-background border border-border rounded-2xl text-center text-3xl tracking-[0.4em] font-mono text-carbon focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all"
                                 />
                                 {isInvalidOtp && (
-                                    <p className="mt-4 text-xs text-red-500 text-center font-bold uppercase tracking-widest">
+                                    <p className="mt-4 text-xs text-red-500 text-center font-extrabold uppercase tracking-widest italic animate-bounce">
                                         Invalid verification code.
                                     </p>
                                 )}
@@ -110,7 +119,7 @@ export default function LoginForm() {
                     )}
 
                     {genericError && (
-                        <div className="text-red-500 text-xs text-center font-bold bg-red-500/10 p-4 rounded-xl border border-red-500/20" aria-live="polite">
+                        <div className="text-red-500 text-xs text-center font-bold bg-red-500/10 p-4 rounded-xl border border-red-500/20 animate-in shake-in" aria-live="polite">
                             {genericError}
                         </div>
                     )}
@@ -124,7 +133,7 @@ export default function LoginForm() {
                             {isPending ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
-                                isOtpRequired ? 'Verify Code' : 'Sign In'
+                                isOtpRequired ? 'Verify & Sign In' : 'Sign In'
                             )}
                         </button>
                     </div>
