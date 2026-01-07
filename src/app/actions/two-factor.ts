@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache";
 export async function generate2FASecret() {
   const session = await auth();
   if (!session?.user?.id || !session.user.email) {
-    throw new Error("Unauthorized: Please login again.");
+    return { error: "Session expired or invalid. Please login again." };
   }
 
   try {
@@ -28,9 +28,9 @@ export async function generate2FASecret() {
       secret,
       qrCodeUrl,
     };
-  } catch (error) {
-    console.error("Failed to generate 2FA secret:", error);
-    throw new Error("Failed to generate setup QR code. Please try again.");
+  } catch (err: any) {
+    console.error("Failed to generate 2FA secret:", err);
+    return { error: "Failed to generate security credentials. Please refresh and try again." };
   }
 }
 

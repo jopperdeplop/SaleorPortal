@@ -27,8 +27,12 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
     setError(null);
     try {
       const result = await generate2FASecret();
-      setQrCode(result.qrCodeUrl);
-      setSecret(result.secret);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      setQrCode(result.qrCodeUrl!);
+      setSecret(result.secret!);
       setSetupStep("showing_qr");
     } catch (error: any) {
       console.error(error);

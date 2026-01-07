@@ -100,6 +100,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.brand = user.brand;
                 token.role = user.role;
                 token.twoFactorEnabled = user.twoFactorEnabled;
+                token.email = user.email;
+                token.name = user.name;
             }
             // Allow manual session update
             if (trigger === "update" && session?.twoFactorEnabled !== undefined) {
@@ -116,6 +118,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             if (token.role) {
                 session.user.role = token.role as string;
+            }
+            if (token.email) {
+                session.user.email = token.email as string;
+            }
+            if (token.name) {
+                session.user.name = token.name as string;
             }
             session.user.twoFactorEnabled = token.twoFactorEnabled as boolean;
             return session;
