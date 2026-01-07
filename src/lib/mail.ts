@@ -31,10 +31,16 @@ export async function sendInviteEmail(email: string, name: string, token: string
         <p style="font-size: 12px; color: #999;">If you didn't expect this invitation, you can safely ignore this email.</p>
       </div>
     `,
+    trackingSettings: {
+      clickTracking: {
+        enable: false,
+        enableText: false,
+      },
+    },
   };
 
   try {
-    await sgMail.send(msg);
+    await sgMail.send(msg as any);
   } catch (error) {
     console.error('Error sending invite email:', error);
     throw error;
@@ -62,10 +68,16 @@ export async function sendPasswordResetEmail(email: string, token: string) {
         <p style="font-size: 12px; color: #999;">Saleor Marketplace Security</p>
       </div>
     `,
+    trackingSettings: {
+      clickTracking: {
+        enable: false,
+        enableText: false,
+      },
+    },
   };
 
   try {
-    await sgMail.send(msg);
+    await sgMail.send(msg as any);
   } catch (error) {
     console.error('Error sending password reset email:', error);
     throw error;
