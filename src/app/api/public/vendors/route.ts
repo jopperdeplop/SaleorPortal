@@ -51,6 +51,9 @@ export async function GET(request: Request) {
             )
         );
 
+        console.log(`[API/Vendors] Final query returned: ${vendorData.length} vendors`);
+        console.log(`[API/Vendors] Result:`, JSON.stringify(vendorData, null, 2));
+
         return NextResponse.json(vendorData, {
             headers: {
                 // Optimization: Cache the response for 5 minutes in the edge
