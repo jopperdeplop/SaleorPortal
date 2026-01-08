@@ -21,6 +21,12 @@ export async function GET(request: Request) {
     }
 
     try {
+        console.log("[API/Vendors] Fetching vendor data...");
+        const allUsers = await db.select({ id: users.id, role: users.role, lat: users.latitude }).from(users);
+        console.log(`[API/Vendors] Database Stats - Total Users: ${allUsers.length}`);
+        console.log(`[API/Vendors] Roles found:`, [...new Set(allUsers.map(u => u.role))]);
+        console.log(`[API/Vendors] Users with Lat:`, allUsers.filter(u => u.lat).length);
+
         // Query only approved vendors with valid coordinates
         const vendorData = await db.select({
             id: users.id,
