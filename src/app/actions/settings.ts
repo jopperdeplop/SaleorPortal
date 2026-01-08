@@ -28,7 +28,6 @@ export async function updateShopSettings(formData: FormData) {
     const eoriNumber = formData.get('eoriNumber') as string;
     const phoneNumber = formData.get('phoneNumber') as string;
     const websiteUrl = formData.get('websiteUrl') as string;
-    const saleorPageSlug = formData.get('saleorPageSlug') as string;
 
     // Extract warehouse location
     const street = formData.get('street') as string;
@@ -66,7 +65,6 @@ export async function updateShopSettings(formData: FormData) {
             eoriNumber,
             phoneNumber,
             websiteUrl,
-            saleorPageSlug,
             street,
             city,
             postalCode: zip,
