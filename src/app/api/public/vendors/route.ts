@@ -11,30 +11,17 @@ export const runtime = 'edge';
  * It returns a minimal dataset, excluding sensitive tax and business identifiers.
  */
 export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
     const secret = request.headers.get('x-internal-secret');
 
     // Security check: Match the shared secret from environment variables
-    const expectedSecret = process.env.INTERNAL_API_SECRET;
-    console.log("[API/Vendors] Request received. Secret match:", secret === expectedSecret, "Secret provided:", !!secret);
-    
-    if (secret !== expectedSecret) {
-        console.warn("[API/Vendors] Unauthorized - secret mismatch");
+    if (secret !== process.env.INTERNAL_API_SECRET) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     try {
-        console.log("[API/Vendors] Fetching vendor data...");
-        const allUsers = await db.select({ id: users.id, role: users.role, lat: users.latitude, brand: users.brand, brandName: users.brandName }).from(users);
-        console.log(`[API/Vendors] Database Stats - Total Users: ${allUsers.length}`);
-        console.log(`[API/Vendors] Roles found:`, [...new Set(allUsers.map(u => u.role))]);
-        console.log(`[API/Vendors] Users with Lat:`, allUsers.filter(u => u.lat).length);
-        console.log(`[API/Vendors] Sample Users:`, JSON.stringify(allUsers.slice(0, 3), null, 2));
-
-        // Query only approved vendors with valid coordinates
+        // Query only vendors with valid coordinates
         const vendorData = await db.select({
             id: users.id,
-            // brandName replaces legacy brand field for public display
             brandName: users.brandName,
             city: users.city,
             countryCode: users.countryCode,
@@ -51,12 +38,8 @@ export async function GET(request: Request) {
             )
         );
 
-        console.log(`[API/Vendors] Final query returned: ${vendorData.length} vendors`);
-        console.log(`[API/Vendors] Result:`, JSON.stringify(vendorData, null, 2));
-
         return NextResponse.json(vendorData, {
             headers: {
-                // Optimization: Cache the response for 5 minutes in the edge
                 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
             },
         });
