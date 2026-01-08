@@ -92,7 +92,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                                         Pending Integration
                                     </span>
                                 )}
-                                <span className="text-[10px] text-gray-400 font-mono">{user.saleorPageSlug || 'discovering...'}</span>
+                                <span className="text-[10px] text-gray-400 font-mono">{user.saleorPageSlug || 'Not Linked'}</span>
                             </div>
                         </div>
                     </div>
