@@ -15,8 +15,11 @@ export async function GET(request: Request) {
     const secret = request.headers.get('x-internal-secret');
 
     // Security check: Match the shared secret from environment variables
-    if (secret !== process.env.INTERNAL_API_SECRET) {
-        console.warn("Unauthorized access attempt to public vendor API.");
+    const expectedSecret = process.env.INTERNAL_API_SECRET;
+    console.log("[API/Vendors] Request received. Secret match:", secret === expectedSecret, "Secret provided:", !!secret);
+    
+    if (secret !== expectedSecret) {
+        console.warn("[API/Vendors] Unauthorized - secret mismatch");
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
