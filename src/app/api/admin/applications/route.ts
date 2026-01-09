@@ -53,11 +53,14 @@ export async function POST(request: Request) {
     if (app.status !== 'pending') return new Response('Application already processed', { status: 400 });
 
     if (action === 'approve') {
+      console.log(`Processing approval for application ID: ${id}`);
+      
       // 1. Check for conflicts in the users table
       const existingEmail = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.email, app.email)
       });
       if (existingEmail) {
+        console.warn(`Approval conflict: User with email ${app.email} already exists.`);
         return new Response('Conflict: A user with this email address already exists in the system.', { status: 409 });
       }
 
@@ -65,6 +68,7 @@ export async function POST(request: Request) {
         where: (users, { eq }) => eq(users.brandName, app.brandName || app.companyName)
       });
       if (existingBrand) {
+        console.warn(`Approval conflict: Brand ${app.brandName || app.companyName} already exists.`);
         return new Response('Conflict: A brand with this name is already registered.', { status: 409 });
       }
 
@@ -75,6 +79,7 @@ export async function POST(request: Request) {
       // 3. Create the user with a locked state
       const lockedPassword = await hash(crypto.randomBytes(64).toString('hex'), 10);
       
+      console.log(`Creating vendor user for ${app.email}...`);
       const [newUser] = await db.insert(users).values({
           name: app.companyName,
           email: app.email,
@@ -95,23 +100,28 @@ export async function POST(request: Request) {
           resetToken: setupToken,
           resetTokenExpiry: tokenExpiry,
       }).returning();
+      console.log(`User created with ID: ${newUser.id}`);
 
       // 4. Trigger geocoding task (saleor-app-template)
       try {
+        console.log(`Triggering geocoding for user ${newUser.id}...`);
         const { tasks } = await import('@trigger.dev/sdk');
         await tasks.trigger("geocode-vendor-address", { userId: newUser.id });
+        console.log('Geocoding task triggered successfully.');
       } catch (error) {
         console.error('Failed to trigger geocoding task:', error);
-        // We don't fail the approval if geocoding trigger fails
       }
 
       // 5. Send the invite email
+      console.log(`Sending invite email to ${app.email}...`);
       await sendInviteEmail(app.email, app.companyName, setupToken);
+      console.log('Invite email process complete.');
 
       // 6. Update application status
       await db.update(vendorApplications)
           .set({ status: 'approved', processedAt: new Date() })
           .where(eq(vendorApplications.id, id));
+      console.log(`Application ${id} status updated to approved.`);
 
       return Response.json({ message: 'Application approved & invitation sent' });
     } else {
