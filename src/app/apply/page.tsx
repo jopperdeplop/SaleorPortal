@@ -43,22 +43,22 @@ export default function ApplyPage() {
                             {/* Brand Info */}
                             <div>
                                 <label htmlFor="brandName" className="block text-sm font-medium text-gray-700">Brand Name (Public)</label>
-                                <input id="brandName" name="brandName" type="text" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g. EcoStyles" />
+                                <input id="brandName" name="brandName" type="text" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" placeholder="e.g. EcoStyles" />
                             </div>
 
                             <div>
                                 <label htmlFor="legalBusinessName" className="block text-sm font-medium text-gray-700">Legal Business Name</label>
-                                <input id="legalBusinessName" name="legalBusinessName" type="text" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g. EcoStyles SAS" />
+                                <input id="legalBusinessName" name="legalBusinessName" type="text" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" placeholder="e.g. EcoStyles SAS" />
                             </div>
 
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">Contact Email</label>
-                                <input id="email" name="email" type="email" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <input id="email" name="email" type="email" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                             </div>
 
                             <div>
                                 <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                                <input id="phoneNumber" name="phoneNumber" type="tel" className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <input id="phoneNumber" name="phoneNumber" type="tel" className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                             </div>
                         </div>
 
@@ -66,17 +66,17 @@ export default function ApplyPage() {
                             {/* EU Tax & Registration */}
                             <div>
                                 <label htmlFor="vatNumber" className="block text-sm font-medium text-gray-700">VAT Number</label>
-                                <input id="vatNumber" name="vatNumber" type="text" placeholder="FR123456789" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <input id="vatNumber" name="vatNumber" type="text" placeholder="FR123456789" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                             </div>
 
                             <div>
                                 <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700">Registration #</label>
-                                <input id="registrationNumber" name="registrationNumber" type="text" placeholder="Chamber of Commerce ID" className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <input id="registrationNumber" name="registrationNumber" type="text" placeholder="Chamber of Commerce ID" className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                             </div>
 
                             <div>
                                 <label htmlFor="eoriNumber" className="block text-sm font-medium text-gray-700">EORI Number</label>
-                                <input id="eoriNumber" name="eoriNumber" type="text" placeholder="FR123..." className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                <input id="eoriNumber" name="eoriNumber" type="text" placeholder="FR123..." className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                             </div>
                         </div>
 
@@ -86,21 +86,21 @@ export default function ApplyPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
                                     <label htmlFor="street" className="block text-sm font-medium text-gray-700">Street Address</label>
-                                    <input id="street" name="street" type="text" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 sm:text-sm" />
+                                    <input id="street" name="street" type="text" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 md:col-span-2">
                                     <div>
                                         <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
-                                        <input id="city" name="city" type="text" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 sm:text-sm" />
+                                        <input id="city" name="city" type="text" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                                     </div>
                                     <div>
                                         <label htmlFor="zip" className="block text-sm font-medium text-gray-700">Postal Code</label>
-                                        <input id="zip" name="zip" type="text" required className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 sm:text-sm" />
+                                        <input id="zip" name="zip" type="text" required className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
-                                    <select id="country" name="country" required className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md text-gray-900">
+                                    <select id="country" name="country" required className="mt-1 block w-full pl-3 pr-10 py-3 text-base border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg transition-all">
                                         <option value="">Select a country</option>
                                         {EU_COUNTRIES.map(c => (
                                             <option key={c.code} value={c.code}>{c.name}</option>
@@ -109,7 +109,7 @@ export default function ApplyPage() {
                                 </div>
                                 <div>
                                     <label htmlFor="websiteUrl" className="block text-sm font-medium text-gray-700">Website URL</label>
-                                    <input id="websiteUrl" name="websiteUrl" type="url" placeholder="https://..." className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-500 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                    <input id="websiteUrl" name="websiteUrl" type="url" placeholder="https://..." className="mt-1 appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all" />
                                 </div>
                             </div>
                         </div>
