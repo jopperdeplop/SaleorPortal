@@ -1,4 +1,8 @@
+"use client";
+
+import { useActionState } from 'react';
 import { submitApplication } from '@/app/actions/submit-application';
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 const EU_COUNTRIES = [
     { code: 'AT', name: 'Austria' },
@@ -24,6 +28,14 @@ const EU_COUNTRIES = [
 ];
 
 export default function ApplyPage() {
+    // Note: useActionState is a React 19 hook
+    const [state, formAction, isPending] = useActionState(
+        async (prevState: any, formData: FormData) => {
+            return await submitApplication(formData);
+        },
+        null
+    );
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -37,7 +49,18 @@ export default function ApplyPage() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form action={submitApplication} className="space-y-6">
+                    
+                    {state?.error && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 text-red-700 animate-in fade-in slide-in-from-top-2">
+                            <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                            <div>
+                                <p className="font-bold">Application Error</p>
+                                <p className="text-sm opacity-90">{state.error}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <form action={formAction} className="space-y-6">
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Brand Info */}
@@ -134,8 +157,19 @@ export default function ApplyPage() {
                         </div>
 
                         <div className="pt-4">
-                            <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                                Submit Partner Application
+                            <button 
+                                type="submit" 
+                                disabled={isPending}
+                                className="w-full flex justify-center items-center gap-2 py-4 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all active:scale-[0.98] disabled:opacity-50 disabled:scale-100"
+                            >
+                                {isPending ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Submitting Application...
+                                    </>
+                                ) : (
+                                    'Submit Partner Application'
+                                )}
                             </button>
                         </div>
                     </form>
