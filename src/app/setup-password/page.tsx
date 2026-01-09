@@ -56,14 +56,14 @@ function SetupPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 p-6">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-stone-200">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black p-6">
+      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
         <header className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-terracotta/10 text-terracotta mb-4">
-            <Lock size={24} />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 mb-4 transition-colors">
+            <Lock size={28} />
           </div>
-          <h1 className="text-2xl font-serif text-carbon mb-2">Set Your Password</h1>
-          <p className="text-stone-500 text-sm">Welcome to Saleor Marketplace. Please create a password for your vendor account.</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Set Your Password</h1>
+          <p className="text-gray-500 text-sm">Welcome to Saleor Marketplace. Please create a password for your vendor account.</p>
         </header>
 
         {error && (
@@ -73,36 +73,36 @@ function SetupPasswordForm() {
           </div>
         )}
 
-        <form action={handleSubmit} className="space-y-4">
+        <form action={handleSubmit} className="space-y-6">
           <input type="hidden" name="token" value={token} />
           
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-stone-500 mb-2">New Password</label>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">New Password</label>
             <input
               type="password"
               name="password"
               required
               minLength={8}
               placeholder="Min. 8 characters"
-              className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-widest text-stone-500 mb-2">Confirm Password</label>
+          <div className="space-y-2">
+            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Confirm Password</label>
             <input
               type="password"
               name="confirmPassword"
               required
               minLength={8}
-              className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-terracotta/20 focus:border-terracotta transition-all"
+              className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-terracotta hover:bg-terracotta-dark text-white font-bold py-4 rounded-xl transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-md active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Complete Setup"}
           </button>

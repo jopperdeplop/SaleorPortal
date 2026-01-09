@@ -53,21 +53,32 @@ export async function POST(request: Request) {
     if (app.status !== 'pending') return new Response('Application already processed', { status: 400 });
 
     if (action === 'approve') {
-      // Check if user already exists
-      const existingUser = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, app.email))
-        .limit(1);
+      // 1. Check for conflicts in the users table
+      const existingEmail = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.email, app.email)
+      });
+      if (existingEmail) {
+        return new Response('Conflict: A user with this email address already exists in the system.', { status: 409 });
+      }
 
-      // 1. Generate a secure setup token
+      const existingBrand = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.brandName, app.brandName || app.companyName)
+      });
+      if (existingBrand) {
+        return new Response('Conflict: A brand with this name is already registered.', { status: 409 });
+      }
+
+      // 2. Generate a secure setup token
       const setupToken = crypto.randomBytes(32).toString('hex');
       const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-      // 2. Create/Update the user
-      const userData = {
+      // 3. Create the user with a locked state
+      const lockedPassword = await hash(crypto.randomBytes(64).toString('hex'), 10);
+      
+      const [newUser] = await db.insert(users).values({
           name: app.companyName,
           email: app.email,
+          password: lockedPassword,
           brand: app.companyName,
           role: 'vendor' as const,
           vatNumber: app.vatNumber,
@@ -83,25 +94,21 @@ export async function POST(request: Request) {
           countryCode: app.countryCode,
           resetToken: setupToken,
           resetTokenExpiry: tokenExpiry,
-      };
+      }).returning();
 
-      if (existingUser.length > 0) {
-        // Update existing user
-        await db.update(users)
-          .set(userData)
-          .where(eq(users.id, existingUser[0].id));
-      } else {
-        // Create the user with a locked state
-        const lockedPassword = await hash(crypto.randomBytes(64).toString('hex'), 10);
-        await db.insert(users).values({
-          ...userData,
-          password: lockedPassword,
-        });
+      // 4. Trigger geocoding task (saleor-app-template)
+      try {
+        const { tasks } = await import('@trigger.dev/sdk');
+        await tasks.trigger("geocode-vendor-address", { userId: newUser.id });
+      } catch (error) {
+        console.error('Failed to trigger geocoding task:', error);
+        // We don't fail the approval if geocoding trigger fails
       }
 
-      // 3. Send the invite email
+      // 5. Send the invite email
       await sendInviteEmail(app.email, app.companyName, setupToken);
 
+      // 6. Update application status
       await db.update(vendorApplications)
           .set({ status: 'approved', processedAt: new Date() })
           .where(eq(vendorApplications.id, id));
