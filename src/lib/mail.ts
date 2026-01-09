@@ -10,6 +10,10 @@ const FROM_EMAIL = process.env.EMAIL_FROM || 'Saleor Marketplace <info@salp.shop
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://partner.salp.shop';
 
 export async function sendInviteEmail(email: string, name: string, token: string) {
+  if (!process.env.SENDGRID_API_KEY) {
+    console.warn('SENDGRID_API_KEY missing, skipping sendInviteEmail');
+    return;
+  }
   const setupUrl = `${APP_URL}/setup-password?token=${token}`;
 
   const msg = {
@@ -43,11 +47,15 @@ export async function sendInviteEmail(email: string, name: string, token: string
     await sgMail.send(msg as any);
   } catch (error) {
     console.error('Error sending invite email:', error);
-    throw error;
+    // Don't throw, just log, so process completes
   }
 }
 
 export async function sendPasswordResetEmail(email: string, token: string) {
+  if (!process.env.SENDGRID_API_KEY) {
+    console.warn('SENDGRID_API_KEY missing, skipping sendPasswordResetEmail');
+    return;
+  }
   const resetUrl = `${APP_URL}/reset-password?token=${token}`;
 
   const msg = {
@@ -80,11 +88,14 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     await sgMail.send(msg as any);
   } catch (error) {
     console.error('Error sending password reset email:', error);
-    throw error;
   }
 }
 
 export async function sendRejectionEmail(email: string, brandName: string) {
+  if (!process.env.SENDGRID_API_KEY) {
+    console.warn('SENDGRID_API_KEY missing, skipping sendRejectionEmail');
+    return;
+  }
   const msg = {
     to: email,
     from: FROM_EMAIL,
@@ -112,6 +123,39 @@ export async function sendRejectionEmail(email: string, brandName: string) {
     await sgMail.send(msg as any);
   } catch (error) {
     console.error('Error sending rejection email:', error);
-    throw error;
+  }
+}
+
+export async function sendApplicationReceivedEmail(email: string, brandName: string) {
+  if (!process.env.SENDGRID_API_KEY) {
+    console.warn('SENDGRID_API_KEY missing, skipping sendApplicationReceivedEmail');
+    return;
+  }
+  const msg = {
+    to: email,
+    from: FROM_EMAIL,
+    subject: 'Application Received - Saleor Marketplace',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <h1 style="color: #c44d32; font-family: serif;">Application Received</h1>
+        <p>Dear ${brandName},</p>
+        <p>Thank you for submitting your application to join the Saleor Marketplace.</p>
+        <p>We have received your details and our team will review them shortly. You can expect to hear from us within 2-3 business days.</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;" />
+        <p style="font-size: 12px; color: #999;">Saleor Marketplace Team</p>
+      </div>
+    `,
+    trackingSettings: {
+      clickTracking: {
+        enable: false,
+        enableText: false,
+      },
+    },
+  };
+
+  try {
+    await sgMail.send(msg as any);
+  } catch (error) {
+    console.error('Error sending application received email:', error);
   }
 }

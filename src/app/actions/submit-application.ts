@@ -3,6 +3,7 @@
 import { db } from '@/db';
 import { vendorApplications } from '@/db/schema';
 import { redirect } from 'next/navigation';
+import { sendApplicationReceivedEmail } from '@/lib/mail';
 
 /**
  * Handles the submission of a new vendor partner application.
@@ -44,6 +45,13 @@ export async function submitApplication(formData: FormData) {
         countryCode: country,
         status: 'pending',
     });
+
+    try {
+        await sendApplicationReceivedEmail(email, brandName);
+    } catch (error) {
+        console.error('Failed to send application confirmation email:', error);
+        // Continue even if email fails - user feedback on success page is enough
+    }
 
     redirect('/apply/success');
 }
