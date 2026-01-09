@@ -44,10 +44,15 @@ export async function sendInviteEmail(email: string, name: string, token: string
   };
 
   try {
-    await sgMail.send(msg as any);
+    console.log(`Attempting to send invite email to: ${email}`);
+    const response = await sgMail.send(msg as any);
+    console.log(`Invite email sent successfully to ${email}. Response status:`, response[0].statusCode);
   } catch (error) {
-    console.error('Error sending invite email:', error);
-    // Don't throw, just log, so process completes
+    console.error(`Error sending invite email to ${email}:`, error);
+    if (error && typeof error === 'object' && 'response' in error) {
+        const sgError = error as any;
+        console.error('SendGrid Error Body:', JSON.stringify(sgError.response.body, null, 2));
+    }
   }
 }
 
@@ -154,8 +159,14 @@ export async function sendApplicationReceivedEmail(email: string, brandName: str
   };
 
   try {
-    await sgMail.send(msg as any);
+    console.log(`Attempting to send application received email to: ${email}`);
+    const response = await sgMail.send(msg as any);
+    console.log(`Application received email sent successfully to ${email}. Response status:`, response[0].statusCode);
   } catch (error) {
-    console.error('Error sending application received email:', error);
+    console.error(`Error sending application received email to ${email}:`, error);
+    if (error && typeof error === 'object' && 'response' in error) {
+        const sgError = error as any;
+        console.error('SendGrid Error Body:', JSON.stringify(sgError.response.body, null, 2));
+    }
   }
 }
