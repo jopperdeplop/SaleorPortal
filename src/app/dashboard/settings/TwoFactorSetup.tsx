@@ -12,7 +12,7 @@ interface TwoFactorSetupProps {
 }
 
 export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
-  const { update } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [setupStep, setSetupStep] = useState<"idle" | "showing_qr">("idle");
@@ -52,13 +52,16 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
         setError(result.error);
       } else {
         // Trigger session update so middleware knows 2FA is active
-        await update({ twoFactorEnabled: true });
+        // Await the update completely to ensure the cookie is rewritten
+        const newSession = await update({ twoFactorEnabled: true });
+        console.log("Session updated:", !!newSession?.user?.twoFactorEnabled);
+        
         setIsSuccess(true);
         
-        // Use a hard redirect to ensure middleware picks up the new cookie
+        // Give a clear success state then hard redirect to break any middleware cache
         setTimeout(() => {
           window.location.href = "/dashboard";
-        }, 2000);
+        }, 1500);
       }
     } catch (error: any) {
       console.error(error);
@@ -102,11 +105,11 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
         ) : setupStep === "idle" && (
           <button
             onClick={handleStartSetup}
-            disabled={loading}
+            disabled={loading || status !== "authenticated"}
             className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg hover:shadow-indigo-200 dark:hover:shadow-none flex items-center gap-2 disabled:opacity-50 text-sm"
           >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : <QrCode size={18} />}
-            Setup 2FA
+            {loading ? <Loader2 size={18} className="animate-spin" /> : (status === "loading" ? <Loader2 size={18} className="animate-spin" /> : <QrCode size={18} />)}
+            {status === "loading" ? "Loading Session..." : "Setup 2FA"}
           </button>
         )}
       </div>

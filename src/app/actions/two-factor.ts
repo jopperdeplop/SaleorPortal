@@ -10,8 +10,15 @@ import { revalidatePath } from "next/cache";
 
 export async function generate2FASecret() {
   const session = await auth();
+  console.log("2FA Setup - Session state:", { 
+    hasSession: !!session, 
+    hasUser: !!session?.user, 
+    userId: session?.user?.id,
+    userEmail: session?.user?.email 
+  });
+
   if (!session?.user?.id || !session.user.email) {
-    return { error: "Session expired or invalid. Please login again." };
+    return { error: "Session synchronization error. Please try again in a moment or refresh the page." };
   }
 
   try {
