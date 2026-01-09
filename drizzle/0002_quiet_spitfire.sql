@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "payload_brand_page_id" text;
