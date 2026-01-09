@@ -53,19 +53,23 @@ export async function POST(request: Request) {
     if (app.status !== 'pending') return new Response('Application already processed', { status: 400 });
 
     if (action === 'approve') {
+      // Check if user already exists
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, app.email))
+        .limit(1);
+
       // 1. Generate a secure setup token
       const setupToken = crypto.randomBytes(32).toString('hex');
       const tokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-      // 2. Create the user with a locked state (random long password)
-      const lockedPassword = await hash(crypto.randomBytes(64).toString('hex'), 10);
-
-      await db.insert(users).values({
+      // 2. Create/Update the user
+      const userData = {
           name: app.companyName,
           email: app.email,
-          password: lockedPassword,
           brand: app.companyName,
-          role: 'vendor',
+          role: 'vendor' as const,
           vatNumber: app.vatNumber,
           legalBusinessName: app.legalBusinessName,
           brandName: app.brandName,
@@ -79,7 +83,21 @@ export async function POST(request: Request) {
           countryCode: app.countryCode,
           resetToken: setupToken,
           resetTokenExpiry: tokenExpiry,
-      });
+      };
+
+      if (existingUser.length > 0) {
+        // Update existing user
+        await db.update(users)
+          .set(userData)
+          .where(eq(users.id, existingUser[0].id));
+      } else {
+        // Create the user with a locked state
+        const lockedPassword = await hash(crypto.randomBytes(64).toString('hex'), 10);
+        await db.insert(users).values({
+          ...userData,
+          password: lockedPassword,
+        });
+      }
 
       // 3. Send the invite email
       await sendInviteEmail(app.email, app.companyName, setupToken);
@@ -101,6 +119,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error('Error processing application:', error);
-    return new Response('Internal Error', { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(`Internal Error: ${errorMessage}`, { status: 500 });
   }
 }
