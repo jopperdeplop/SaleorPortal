@@ -114,6 +114,25 @@ export default function ApplyPage() {
                             </div>
                         </div>
 
+                        {/* Terms and Conditions */}
+                        <div className="border-t pt-6">
+                            <div className="flex items-start gap-3">
+                                <input 
+                                    type="checkbox" 
+                                    id="acceptTerms" 
+                                    name="acceptTerms" 
+                                    required 
+                                    className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                />
+                                <label htmlFor="acceptTerms" className="text-sm text-gray-600">
+                                    I have read and agree to the{' '}
+                                    <a href="/terms" target="_blank" className="text-indigo-600 underline hover:text-indigo-800">
+                                        Vendor Terms & Conditions
+                                    </a>.
+                                </label>
+                            </div>
+                        </div>
+
                         <div className="pt-4">
                             <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                                 Submit Partner Application

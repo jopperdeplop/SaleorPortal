@@ -83,3 +83,35 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     throw error;
   }
 }
+
+export async function sendRejectionEmail(email: string, brandName: string) {
+  const msg = {
+    to: email,
+    from: FROM_EMAIL,
+    subject: 'Application Update - Saleor Marketplace',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <h1 style="color: #c44d32; font-family: serif;">Application Update</h1>
+        <p>Dear ${brandName},</p>
+        <p>Thank you for your interest in becoming a vendor on our marketplace.</p>
+        <p>After careful review, we regret to inform you that your application has not been approved at this time.</p>
+        <p>For more information about this decision, please contact us at <a href="mailto:info@salp.shop">info@salp.shop</a>.</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;" />
+        <p style="font-size: 12px; color: #999;">Saleor Marketplace Team</p>
+      </div>
+    `,
+    trackingSettings: {
+      clickTracking: {
+        enable: false,
+        enableText: false,
+      },
+    },
+  };
+
+  try {
+    await sgMail.send(msg as any);
+  } catch (error) {
+    console.error('Error sending rejection email:', error);
+    throw error;
+  }
+}

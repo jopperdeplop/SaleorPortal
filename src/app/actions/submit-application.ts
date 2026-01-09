@@ -42,8 +42,6 @@ export async function submitApplication(formData: FormData) {
         city,
         postalCode: zip,
         countryCode: country,
-        country, // Legacy mapping
-        warehouseAddress: { street, city, zip, country }, // Legacy mapping
         status: 'pending',
     });
 

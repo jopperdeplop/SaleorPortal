@@ -3,7 +3,7 @@ import { vendorApplications, users } from '@/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import { hash } from 'bcryptjs';
 import crypto from 'crypto';
-import { sendInviteEmail } from '@/lib/mail';
+import { sendInviteEmail, sendRejectionEmail } from '@/lib/mail';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,7 +67,16 @@ export async function POST(request: Request) {
           brand: app.companyName,
           role: 'vendor',
           vatNumber: app.vatNumber,
-          warehouseAddress: app.warehouseAddress,
+          legalBusinessName: app.legalBusinessName,
+          brandName: app.brandName,
+          registrationNumber: app.registrationNumber,
+          eoriNumber: app.eoriNumber,
+          phoneNumber: app.phoneNumber,
+          websiteUrl: app.websiteUrl,
+          street: app.street,
+          city: app.city,
+          postalCode: app.postalCode,
+          countryCode: app.countryCode,
           resetToken: setupToken,
           resetTokenExpiry: tokenExpiry,
       });
@@ -81,11 +90,14 @@ export async function POST(request: Request) {
 
       return Response.json({ message: 'Application approved & invitation sent' });
     } else {
+      // Send rejection email
+      await sendRejectionEmail(app.email, app.companyName);
+
       await db.update(vendorApplications)
           .set({ status: 'rejected', processedAt: new Date() })
           .where(eq(vendorApplications.id, id));
 
-      return Response.json({ message: 'Application rejected' });
+      return Response.json({ message: 'Application rejected & notification sent' });
     }
   } catch (error) {
     console.error('Error processing application:', error);

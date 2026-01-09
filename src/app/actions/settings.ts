@@ -69,7 +69,6 @@ export async function updateShopSettings(formData: FormData) {
             city,
             postalCode: zip,
             countryCode: country,
-            warehouseAddress: { street, city, zip, country }, // Support legacy mapping
             shippingCountries: shippingCountries
         })
         .where(eq(users.id, userId))

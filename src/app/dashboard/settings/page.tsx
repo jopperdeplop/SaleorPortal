@@ -160,19 +160,19 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
                             <div className="md:col-span-6">
                                 <label htmlFor="street" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Street Address</label>
-                                <input type="text" name="street" id="street" defaultValue={user.street || (user.warehouseAddress as any)?.street || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
+                                <input type="text" name="street" id="street" defaultValue={user.street || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
                             </div>
                             <div className="md:col-span-2">
                                 <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300">City</label>
-                                <input type="text" name="city" id="city" defaultValue={user.city || (user.warehouseAddress as any)?.city || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
+                                <input type="text" name="city" id="city" defaultValue={user.city || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
                             </div>
                             <div className="md:col-span-2">
                                 <label htmlFor="zip" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Postal Code</label>
-                                <input type="text" name="zip" id="zip" defaultValue={user.postalCode || (user.warehouseAddress as any)?.zip || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
+                                <input type="text" name="zip" id="zip" defaultValue={user.postalCode || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
                             </div>
                             <div className="md:col-span-2">
                                 <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
-                                <select id="country" name="country" defaultValue={user.countryCode || (user.warehouseAddress as any)?.country || 'FR'} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border">
+                                <select id="country" name="country" defaultValue={user.countryCode || 'NL'} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border">
                                     {EU_COUNTRIES.map(c => (
                                         <option key={c.code} value={c.code}>{c.name}</option>
                                     ))}
