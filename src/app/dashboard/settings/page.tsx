@@ -80,21 +80,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                             <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Business Registration #</label>
                             <input type="text" name="registrationNumber" id="registrationNumber" defaultValue={user.registrationNumber || ''} className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Marketplace Integration</label>
-                            <div className="mt-1 flex items-center gap-2">
-                                {user.saleorPageSlug ? (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
-                                        Linked to Storefront
-                                    </span>
-                                ) : (
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">
-                                        Pending Integration
-                                    </span>
-                                )}
-                                <span className="text-[10px] text-gray-400 font-mono">{user.saleorPageSlug || 'Not Linked'}</span>
-                            </div>
-                        </div>
                     </div>
                 </section>
 
