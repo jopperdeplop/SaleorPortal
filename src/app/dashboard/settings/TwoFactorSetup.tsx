@@ -54,14 +54,11 @@ export function TwoFactorSetup({ enabled }: TwoFactorSetupProps) {
         // Trigger session update so middleware knows 2FA is active
         await update({ twoFactorEnabled: true });
         setIsSuccess(true);
+        
+        // Use a hard redirect to ensure middleware picks up the new cookie
         setTimeout(() => {
-          setSetupStep("idle");
-          setQrCode(null);
-          setSecret(null);
-          setCode("");
-          router.push("/dashboard");
-          router.refresh();
-        }, 1500);
+          window.location.href = "/dashboard";
+        }, 2000);
       }
     } catch (error: any) {
       console.error(error);
