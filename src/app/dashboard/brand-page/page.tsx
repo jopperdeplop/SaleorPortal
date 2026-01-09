@@ -8,18 +8,15 @@ interface BrandHeroBlock {
   logo?: { url: string }
   coverImage?: { url: string }
   tagline?: string
-  socialLinks?: {
-    instagram?: string
-    youtube?: string
-  }
+  instagramUrl?: string
+  youtubeUrl?: string
 }
 
 interface BrandAboutBlock {
   blockType: 'brand-about'
   heading?: string
-  story?: unknown
+  story?: string
   foundingYear?: number
-  images?: Array<{ image?: { url: string }; caption?: string }>
 }
 
 type BrandBlock = BrandHeroBlock | BrandAboutBlock
@@ -46,6 +43,7 @@ export default function BrandPageEditor() {
 
   // Form state for About block
   const [aboutHeading, setAboutHeading] = useState('About Us')
+  const [story, setStory] = useState('')
   const [foundingYear, setFoundingYear] = useState<number | ''>('')
 
   useEffect(() => {
@@ -66,11 +64,12 @@ export default function BrandPageEditor() {
           
           if (hero) {
             setTagline(hero.tagline || '')
-            setInstagram(hero.socialLinks?.instagram || '')
-            setYoutube(hero.socialLinks?.youtube || '')
+            setInstagram(hero.instagramUrl || '')
+            setYoutube(hero.youtubeUrl || '')
           }
           if (about) {
             setAboutHeading(about.heading || 'About Us')
+            setStory(about.story || '')
             setFoundingYear(about.foundingYear || '')
           }
         }
@@ -97,14 +96,13 @@ export default function BrandPageEditor() {
         {
           blockType: 'brand-hero',
           tagline,
-          socialLinks: {
-            instagram: instagram || undefined,
-            youtube: youtube || undefined,
-          },
+          instagramUrl: instagram || undefined,
+          youtubeUrl: youtube || undefined,
         },
         {
           blockType: 'brand-about',
           heading: aboutHeading,
+          story: story || undefined,
           foundingYear: foundingYear || undefined,
         },
       ]
@@ -249,6 +247,18 @@ export default function BrandPageEditor() {
                   value={aboutHeading}
                   onChange={(e) => setAboutHeading(e.target.value)}
                   placeholder="About Us"
+                  className="w-full px-4 py-2 border border-vapor dark:border-border rounded-lg bg-white dark:bg-stone-800 text-carbon dark:text-white focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
+                  Brand Story
+                </label>
+                <textarea
+                  value={story}
+                  onChange={(e) => setStory(e.target.value)}
+                  placeholder="Share your brand's history and mission..."
+                  rows={6}
                   className="w-full px-4 py-2 border border-vapor dark:border-border rounded-lg bg-white dark:bg-stone-800 text-carbon dark:text-white focus:ring-2 focus:ring-terracotta focus:border-transparent"
                 />
               </div>

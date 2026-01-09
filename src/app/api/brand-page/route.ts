@@ -38,24 +38,21 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Invalid layout format" }, { status: 400 })
     }
 
-    // Sanitize social links - only allow Instagram and YouTube
+    // Sanitize layout fields
     if (body.layout) {
       for (const block of body.layout) {
-        if (block.blockType === 'brand-hero' && block.socialLinks) {
-          const { instagram, youtube } = block.socialLinks
+        if (block.blockType === 'brand-hero') {
+          const { instagramUrl, youtubeUrl } = block
           
           // Validate Instagram URL
-          if (instagram && !instagram.includes('instagram.com')) {
+          if (instagramUrl && !instagramUrl.includes('instagram.com')) {
             return NextResponse.json({ error: "Invalid Instagram URL" }, { status: 400 })
           }
           
           // Validate YouTube URL
-          if (youtube && !youtube.includes('youtube.com') && !youtube.includes('youtu.be')) {
+          if (youtubeUrl && !youtubeUrl.includes('youtube.com') && !youtubeUrl.includes('youtu.be')) {
             return NextResponse.json({ error: "Invalid YouTube URL" }, { status: 400 })
           }
-          
-          // Remove any other social links
-          block.socialLinks = { instagram, youtube }
         }
       }
     }
