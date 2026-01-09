@@ -54,7 +54,7 @@ async function payloadFetch<T>(
 export async function getVendorBrandPage(vendorId: string): Promise<PayloadBrandPage | null> {
   try {
     const response = await payloadFetch<{ docs: PayloadBrandPage[] }>(
-      `/brand-pages?where[vendorId][equals]=${vendorId}&limit=1`
+      `/brand-page?where[vendorId][equals]=${vendorId}&limit=1`
     )
     return response.docs[0] || null
   } catch (error) {
@@ -70,7 +70,7 @@ export async function getBrandPageBySlug(slug: string, locale?: string): Promise
   try {
     const localeParam = locale ? `&locale=${locale}` : ''
     const response = await payloadFetch<{ docs: PayloadBrandPage[] }>(
-      `/brand-pages?where[saleorPageSlug][equals]=${slug}&limit=1${localeParam}`
+      `/brand-page?where[saleorPageSlug][equals]=${slug}&limit=1${localeParam}`
     )
     return response.docs[0] || null
   } catch (error) {
@@ -83,7 +83,7 @@ export async function getBrandPageBySlug(slug: string, locale?: string): Promise
  * Create a new brand page
  */
 export async function createBrandPage(data: BrandPageData): Promise<PayloadBrandPage> {
-  return payloadFetch<{ doc: PayloadBrandPage }>('/brand-pages', {
+  return payloadFetch<{ doc: PayloadBrandPage }>('/brand-page', {
     method: 'POST',
     body: JSON.stringify(data),
   }).then(res => res.doc)
@@ -99,7 +99,7 @@ export async function updateVendorBrandPage(
   const existing = await getVendorBrandPage(vendorId)
   if (!existing) return null
 
-  return payloadFetch<{ doc: PayloadBrandPage }>(`/brand-pages/${existing.id}`, {
+  return payloadFetch<{ doc: PayloadBrandPage }>(`/brand-page/${existing.id}`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   }).then(res => res.doc)
