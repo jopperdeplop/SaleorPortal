@@ -126,7 +126,10 @@ export async function uploadMedia(
 ): Promise<{ id: string; url: string }> {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('alt', alt || file.name)
+  
+  // PayloadCMS REST API expects document fields in a _payload JSON field for file uploads
+  const altText = alt || file.name.replace(/\.[^/.]+$/, '') // Remove file extension as fallback
+  formData.append('_payload', JSON.stringify({ alt: altText }))
 
   const res = await fetch(`${PAYLOAD_API_URL}/media`, {
     method: 'POST',
@@ -138,6 +141,8 @@ export async function uploadMedia(
   })
 
   if (!res.ok) {
+    const errorText = await res.text()
+    console.error('Media upload failed:', errorText)
     throw new Error(`Failed to upload media: ${res.status}`)
   }
 
