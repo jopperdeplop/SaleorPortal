@@ -13,11 +13,12 @@ export default function LoginForm() {
     // Store credentials locally to persist across 2FA transition
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [hasSubmittedOtp, setHasSubmittedOtp] = useState(false);
     
     const [state, formAction, isPending] = useActionState(authenticate, undefined);
 
     const isOtpRequired = state === "OTP_REQUIRED" || state === "INVALID_OTP";
-    const isInvalidOtp = state === "INVALID_OTP";
+    const isInvalidOtp = state === "INVALID_OTP" && hasSubmittedOtp;
     const genericError = state && state !== "OTP_REQUIRED" && state !== "INVALID_OTP" ? state : null;
 
     return (
@@ -40,7 +41,13 @@ export default function LoginForm() {
                 </div>
 
                 {/* Form */}
-                <form action={formAction} className="space-y-6">
+                <form action={(formData) => {
+                    // Track that OTP has been submitted when in OTP mode
+                    if (isOtpRequired) {
+                        setHasSubmittedOtp(true);
+                    }
+                    formAction(formData);
+                }} className="space-y-6">
                     <input type="hidden" name="redirectTo" value={callbackUrl} />
                     
                     {!isOtpRequired ? (
