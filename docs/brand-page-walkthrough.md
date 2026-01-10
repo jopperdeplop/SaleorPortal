@@ -1,4 +1,6 @@
-# Brand Page Customization - Complete Walkthrough
+# Brand Page Feature Walkthrough
+
+> [!IMPORTANT] > **Pending Task:** The `migrate-existing-vendors` task in Trigger.dev needs to be run once PayloadCMS is fully stable to populate existing vendors.
 
 This document explains how the vendor brand page customization feature works and how to test it.
 
@@ -41,12 +43,12 @@ This document explains how the vendor brand page customization feature works and
 
 ### SaleorPortal
 
-| File                                    | Purpose                          |
-| --------------------------------------- | -------------------------------- |
-| `src/lib/payload.ts`                    | PayloadCMS API client            |
-| `src/app/api/brand-page/route.ts`       | API route for brand page CRUD    |
-| `src/app/dashboard/brand-page/page.tsx` | Brand page editor UI             |
-| `src/db/schema.ts`                      | Added `payloadBrandPageId` field |
+| File                                | Purpose                          |
+| ----------------------------------- | -------------------------------- |
+| `src/lib/payload.ts`                | PayloadCMS API client            |
+| `src/api/brand-page/route.ts`       | API route for brand page CRUD    |
+| `src/dashboard/brand-page/page.tsx` | Brand page editor UI             |
+| `src/db/schema.ts`                  | Added `payloadBrandPageId` field |
 
 ### Trigger.dev (saleor-app-template)
 
@@ -87,7 +89,7 @@ Or trigger a redeploy on Vercel which will auto-migrate.
 1. Go to [Trigger.dev Dashboard](https://cloud.trigger.dev)
 2. Navigate to **Tasks** → Find `migrate-existing-vendors`
 3. Click **Trigger** to run it once
-4. Check output - should show "migrated: 2, failed: 0"
+4. Check output - should show "migrated: X, failed: 0"
 
 ### Step 3: Test Brand Page Editor
 

@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+
 
 const nextConfig: any = {
   eslint: {
@@ -6,6 +6,24 @@ const nextConfig: any = {
   },
   typescript: {
     ignoreBuildErrors: true,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "payload-saleor-payload.vercel.app",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.salp.shop",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*",
+      },
+    ],
   },
 };
 

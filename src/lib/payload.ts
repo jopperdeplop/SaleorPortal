@@ -27,15 +27,24 @@ export interface PayloadBrandPage {
 
 async function payloadFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  vendorId?: string
 ): Promise<T> {
   const url = `${PAYLOAD_API_URL}${endpoint}`
   
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'x-payload-api-key': PAYLOAD_API_KEY,
+  }
+
+  if (vendorId) {
+    headers['x-vendor-id'] = vendorId
+  }
+
   const res = await fetch(url, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
-      'x-payload-api-key': PAYLOAD_API_KEY,
+      ...headers,
       ...options.headers,
     },
   })
@@ -54,7 +63,9 @@ async function payloadFetch<T>(
 export async function getVendorBrandPage(vendorId: string): Promise<PayloadBrandPage | null> {
   try {
     const response = await payloadFetch<{ docs: PayloadBrandPage[] }>(
-      `/brand-page?where[vendorId][equals]=${vendorId}&limit=1`
+      `/brand-page?where[vendorId][equals]=${vendorId}&limit=1`,
+      {},
+      vendorId
     )
     return response.docs[0] || null
   } catch (error) {
@@ -86,7 +97,7 @@ export async function createBrandPage(data: BrandPageData): Promise<PayloadBrand
   return payloadFetch<{ doc: PayloadBrandPage }>('/brand-page', {
     method: 'POST',
     body: JSON.stringify(data),
-  }).then(res => res.doc)
+  }, data.vendorId).then(res => res.doc)
 }
 
 /**
@@ -102,7 +113,7 @@ export async function updateVendorBrandPage(
   return payloadFetch<{ doc: PayloadBrandPage }>(`/brand-page/${existing.id}`, {
     method: 'PATCH',
     body: JSON.stringify(data),
-  }).then(res => res.doc)
+  }, vendorId).then(res => res.doc)
 }
 
 /**

@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Store, Image as ImageIcon, Instagram, Youtube, Loader2, Save, ExternalLink } from 'lucide-react'
 
 interface BrandHeroBlock {
   blockType: 'brand-hero'
-  logo?: { url: string }
-  coverImage?: { url: string }
+  logo?: string | { id: string; url: string }
+  coverImage?: string | { id: string; url: string }
   tagline?: string
   instagramUrl?: string
   youtubeUrl?: string
@@ -40,6 +41,10 @@ export default function BrandPageEditor() {
   const [tagline, setTagline] = useState('')
   const [instagram, setInstagram] = useState('')
   const [youtube, setYoutube] = useState('')
+  const [logoId, setLogoId] = useState<string | null>(null)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [coverId, setCoverId] = useState<string | null>(null)
+  const [coverUrl, setCoverUrl] = useState<string | null>(null)
 
   // Form state for About block
   const [aboutHeading, setAboutHeading] = useState('About Us')
@@ -66,6 +71,20 @@ export default function BrandPageEditor() {
             setTagline(hero.tagline || '')
             setInstagram(hero.instagramUrl || '')
             setYoutube(hero.youtubeUrl || '')
+            
+            if (typeof hero.logo === 'object' && hero.logo !== null) {
+              setLogoId(hero.logo.id)
+              setLogoUrl(hero.logo.url)
+            } else if (typeof hero.logo === 'string') {
+              setLogoId(hero.logo)
+            }
+
+            if (typeof hero.coverImage === 'object' && hero.coverImage !== null) {
+              setCoverId(hero.coverImage.id)
+              setCoverUrl(hero.coverImage.url)
+            } else if (typeof hero.coverImage === 'string') {
+              setCoverId(hero.coverImage)
+            }
           }
           if (about) {
             setAboutHeading(about.heading || 'About Us')
@@ -92,12 +111,14 @@ export default function BrandPageEditor() {
     setSuccessMessage(null)
 
     try {
-      const layout: BrandBlock[] = [
+       const layout: BrandBlock[] = [
         {
           blockType: 'brand-hero',
           tagline,
           instagramUrl: instagram || undefined,
           youtubeUrl: youtube || undefined,
+          logo: logoId || undefined,
+          coverImage: coverId || undefined,
         },
         {
           blockType: 'brand-about',
@@ -123,6 +144,42 @@ export default function BrandPageEditor() {
       }
     } catch {
       setError('Failed to save brand page')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'cover') {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setSaving(true)
+    setError(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('alt', `${brandPage?.brandName} ${type}`)
+
+      const res = await fetch('/api/media', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        if (type === 'logo') {
+          setLogoId(data.media.id)
+          setLogoUrl(data.media.url)
+        } else {
+          setCoverId(data.media.id)
+          setCoverUrl(data.media.url)
+        }
+      } else {
+        setError(`Failed to upload ${type}`)
+      }
+    } catch {
+      setError(`Failed to upload ${type}`)
     } finally {
       setSaving(false)
     }
@@ -184,7 +241,55 @@ export default function BrandPageEditor() {
                 Hero Section
               </h3>
             </div>
-            <div className="p-6 space-y-4">
+             <div className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
+                    Brand Logo
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {logoUrl ? (
+                      <div className="relative size-20 rounded-full overflow-hidden border border-vapor">
+                        <Image src={logoUrl} alt="Logo preview" fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="size-20 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center border border-vapor border-dashed">
+                        <ImageIcon className="w-8 h-8 text-stone-400" />
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'logo')}
+                      className="text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-terracotta/10 file:text-terracotta hover:file:bg-terracotta/20 cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
+                    Cover Image
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {coverUrl ? (
+                      <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-vapor">
+                        <Image src={coverUrl} alt="Cover preview" fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-20 w-32 rounded-lg bg-stone-100 dark:bg-stone-800 flex items-center justify-center border border-vapor border-dashed">
+                        <ImageIcon className="w-8 h-8 text-stone-400" />
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'cover')}
+                      className="text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-terracotta/10 file:text-terracotta hover:file:bg-terracotta/20 cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
                   Tagline
