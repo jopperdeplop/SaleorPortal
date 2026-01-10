@@ -1,8 +1,6 @@
 # Brand Page Feature Walkthrough
 
-> [!IMPORTANT] > **Pending Task:** The `migrate-existing-vendors` task in Trigger.dev needs to be run once PayloadCMS is fully stable to populate existing vendors.
-
-This document explains how the vendor brand page customization feature works and how to test it.
+This document explains how the vendor brand page customization feature works and how to test it from scratch.
 
 ---
 
@@ -43,132 +41,106 @@ This document explains how the vendor brand page customization feature works and
 
 ### SaleorPortal
 
-| File                                | Purpose                          |
-| ----------------------------------- | -------------------------------- |
-| `src/lib/payload.ts`                | PayloadCMS API client            |
-| `src/api/brand-page/route.ts`       | API route for brand page CRUD    |
-| `src/dashboard/brand-page/page.tsx` | Brand page editor UI             |
-| `src/db/schema.ts`                  | Added `payloadBrandPageId` field |
+| File                                | Purpose                                             |
+| ----------------------------------- | --------------------------------------------------- |
+| `src/lib/payload.ts`                | PayloadCMS API client with x-vendor-id support      |
+| `src/api/brand-page/route.ts`       | API route for brand page CRUD                       |
+| `src/api/media/route.ts`            | Proxy API for secure vendor media uploads           |
+| `src/dashboard/brand-page/page.tsx` | Premium editor with image uploads & Social previews |
+| `src/components/layout/HeaderLinks` | Integrated "Brand Page" link in vendor dashboard    |
 
 ### Trigger.dev (saleor-app-template)
 
-| File                                      | Purpose                                          |
-| ----------------------------------------- | ------------------------------------------------ |
-| `src/trigger/geocode-vendor.ts`           | Updated to create PayloadCMS entries on approval |
-| `src/trigger/migrate-existing-vendors.ts` | One-time migration for existing vendors          |
-| `src/trigger/translate-brand-pages.ts`    | Daily translation automation                     |
-| `src/db/schema.ts`                        | Added `payloadBrandPageId` field                 |
+| File                                   | Purpose                                          |
+| -------------------------------------- | ------------------------------------------------ |
+| `src/trigger/geocode-vendor.ts`        | Updated to create PayloadCMS entries on approval |
+| `src/trigger/translate-brand-pages.ts` | Daily translation automation                     |
+| `src/db/schema.ts`                     | Added `payloadBrandPageId` field                 |
 
 ### Storefront
 
 | File                                                      | Purpose                              |
 | --------------------------------------------------------- | ------------------------------------ |
 | `src/lib/payload.ts`                                      | PayloadCMS fetch client              |
-| `src/ui/components/BrandPageRenderer.tsx`                 | Renders Hero and About blocks        |
+| `src/ui/components/BrandPageRenderer.tsx`                 | Renders Hero (Parallax) and About    |
 | `src/ui/components/BrandProductShowcase.tsx`              | Auto product grid by brand attribute |
-| `src/app/[channel]/[locale]/(main)/pages/[slug]/page.tsx` | Updated to detect brand pages        |
+| `src/app/[channel]/[locale]/(main)/pages/[slug]/page.tsx` | Detects "Brand" type pages & renders |
 
 ---
 
-## Testing Guide
+## End-to-End Testing Guide
 
-### Step 1: Run PayloadCMS Migration
+### Step 1: Create and Approve a New Vendor
 
-After the Vercel deployments complete, run the PayloadCMS database migration:
+1.  Go to the [Vendor Application Page](https://salp.shop/en/register) or create a fresh vendor in the Saleor HUB.
+2.  **Approve** the vendor in the Admin Hub.
+3.  Monitor [Trigger.dev Dashboard](https://cloud.trigger.dev):
+    - The `geocode-vendor` task should run.
+    - It should create a **Saleor Page** and a **Payload Brand Page**.
+    - Verify the `payloadBrandPageId` is saved in the portal database.
 
-```bash
-cd c:\Users\jopbr\Documents\GitHub\payload\saleor-payload
-pnpm payload migrate:create
-pnpm payload migrate
-```
+### Step 2: Access the Brand Page Editor
 
-Or trigger a redeploy on Vercel which will auto-migrate.
+1.  Log in to **SaleorPortal** with the new vendor account.
+2.  Click **"Brand Page"** in the top navigation bar.
+3.  You should see the premium editor.
+4.  **Test Uploads**:
+    - Upload a **Brand Logo** (circular preview).
+    - Upload a **Cover Image** (landscape preview).
+    - Verify images are uploaded to Vercel Blob and linked to the vendor.
 
-### Step 2: Migrate Existing Vendors
+### Step 3: Customize and Save
 
-1. Go to [Trigger.dev Dashboard](https://cloud.trigger.dev)
-2. Navigate to **Tasks** → Find `migrate-existing-vendors`
-3. Click **Trigger** to run it once
-4. Check output - should show "migrated: X, failed: 0"
+1.  Enter a **Tagline** (e.g., "The future of sustainable fashion").
+2.  Add an **Instagram URL** and **YouTube URL**.
+3.  Write a **Brand Story** in the About section.
+4.  Click **Save Changes**.
 
-### Step 3: Test Brand Page Editor
+### Step 4: Verify Storefront Rendering
 
-1. Log in to SaleorPortal as a vendor (e.g., test vendor)
-2. Navigate to `/dashboard/brand-page`
-3. You should see the brand page editor with:
-   - **Hero Section**: Tagline, Instagram URL, YouTube URL
-   - **About Section**: Heading, Founding Year
-4. Fill in some values and click **Save Changes**
-5. Verify success message appears
-
-### Step 4: Test Storefront Rendering
-
-1. Visit the storefront: `https://salp.shop/nl/en/pages/[brand-slug]`
-   - Replace `[brand-slug]` with the vendor's brand page slug
-2. You should see:
-   - Hero section with tagline and social links
-   - About section with heading
-   - Product showcase (if products have `brand` attribute set)
+1.  Click the **"View Live Page"** link at the top of the editor.
+2.  Verify the rendering on `https://salp.shop/[locale]/pages/[slug]`:
+    - **Premium Hero**: Parallax cover image + floating logo.
+    - **Social Cluster**: Branded Instagram/YouTube buttons.
+    - **Story Section**: Clean typography with "Legacy" year badge.
+    - **Product Grid**: Ensure products appear (requires products assigned to this brand).
 
 ### Step 5: Verify Translation Automation
 
-The translation task runs daily at midnight UTC. To test manually:
-
-1. Go to [Trigger.dev Dashboard](https://cloud.trigger.dev)
-2. Navigate to **Tasks** → Find `translate-brand-pages-daily`
-3. Click **Trigger** to run manually
-4. Check logs for translation activity
+1.  Wait 24h or trigger `translate-brand-pages-daily` in Trigger.dev manually.
+2.  Verify PayloadCMS blocks now have translated values for non-English locales.
 
 ---
 
-## Vendor Permissions
+## Vendor Permissions & Security
 
-| Feature                  | Allowed |
-| ------------------------ | :-----: |
-| Edit tagline             |   ✅    |
-| Edit heading             |   ✅    |
-| Add Instagram URL        |   ✅    |
-| Add YouTube URL          |   ✅    |
-| Add external website     |   ❌    |
-| Add custom HTML/JS       |   ❌    |
-| Edit other vendor's page |   ❌    |
-
----
-
-## Security Measures
-
-| Area            | Implementation                                        |
-| --------------- | ----------------------------------------------------- |
-| Authentication  | JWT session required for /api/brand-page              |
-| Authorization   | vendorId extracted server-side, never from client     |
-| IDOR Prevention | PayloadCMS access hooks filter by vendorId            |
-| Media Isolation | ownerId field on media, filtered by vendor            |
-| Social Links    | Only Instagram/YouTube allowed, validated server-side |
-| XSS             | Rich text sanitized before render                     |
+| Feature                  | Allowed | Security Implementation                         |
+| ------------------------ | :-----: | ----------------------------------------------- |
+| Edit Brand Text          |   ✅    | Sanitized server-side                           |
+| Upload Images            |   ✅    | Proxy API injects `ownerId` to prevent spoofing |
+| Edit Social Links        |   ✅    | Validated against known domains (IG/YT)         |
+| Change Brand Slug        |   ❌    | Fixed to Saleor page slug                       |
+| Access Other Media       |   ❌    | Payload Access Hooks filter by `vendorId`       |
+| View Other Vendor's Page |   ❌    | Multi-tenancy filtering at database level       |
 
 ---
 
 ## Troubleshooting
 
-### Brand page not showing in editor
+### "Brand Page Not Ready"
 
-- Check that the vendor has the `payloadBrandPageId` field populated
-- Run the `migrate-existing-vendors` task if needed
+- The Trigger.dev task might have failed. Check `geocode-vendor` logs.
+- Ensure the Saleor Page Type "Brand" exists with ID `UGFnZVR5cGU6NQ==`.
 
-### Products not showing on brand page
+### Images not loading
 
-- Ensure products have a `brand` attribute with value matching the brand slug
-- Check that products are published in the correct channel
+- Check if `PAYLOAD_PUBLIC_URL` is set correctly in the Storefront.
+- Verify that the domain `payload-saleor-payload.vercel.app` is in the `next.config.js` remotePatterns.
 
-### PayloadCMS errors
+### Layout changes not saving
 
-- Verify `PAYLOAD_API_URL` and `PAYLOAD_API_KEY` are set in environment variables
-- Check PayloadCMS admin panel for API key validity
-
-### Translation not working
-
-- Verify `GOOGLE_AI_API_KEY` is set in Trigger.dev environment variables
-- Check the translation task logs for errors
+- Check browser console for 401/403 errors (indicates session or permission issue).
+- Ensure the `x-vendor-id` header is being passed by the Portal internal fetcher.
 
 ---
 
@@ -181,3 +153,4 @@ The translation task runs daily at midnight UTC. To test manually:
 | **Trigger.dev**  | `PAYLOAD_API_URL`         | `https://payload-saleor-payload.vercel.app/api` |
 | **Trigger.dev**  | `PAYLOAD_API_KEY`         | _(from PayloadCMS admin)_                       |
 | **Storefront**   | `NEXT_PUBLIC_PAYLOAD_URL` | `https://payload-saleor-payload.vercel.app`     |
+| **Storefront**   | `NEXT_PUBLIC_SERVER_URL`  | `https://salp.shop`                             |
