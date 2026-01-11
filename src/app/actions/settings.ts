@@ -35,6 +35,11 @@ export async function updateShopSettings(formData: FormData) {
     const zip = formData.get('zip') as string;
     const country = formData.get('country') as string;
     
+    // Extract bank & payout info
+    const iban = formData.get('iban') as string;
+    const bic = formData.get('bic') as string;
+    const bankAccountHolder = formData.get('bankAccountHolder') as string;
+
     // Extract multi-select countries for shipping
     const shippingCountries = formData.getAll('shippingCountries') as string[];
 
@@ -69,7 +74,10 @@ export async function updateShopSettings(formData: FormData) {
             city,
             postalCode: zip,
             countryCode: country,
-            shippingCountries: shippingCountries
+            shippingCountries: shippingCountries,
+            iban,
+            bic,
+            bankAccountHolder
         })
         .where(eq(users.id, userId))
         .returning({ brand: users.brand, id: users.id });

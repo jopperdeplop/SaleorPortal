@@ -174,6 +174,37 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                         )}
                     </div>
                 </section>
++
++                {/* Financial Settings */}
++                <section className="bg-white dark:bg-card border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
++                    <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-stone-900/50 flex items-center gap-2">
++                        <Building2 className="w-5 h-5 text-terracotta" />
++                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Financial & Payouts</h2>
++                    </div>
++                    <div className="p-6">
++                        <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg mb-6">
++                            <Paintbrush className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
++                            <p className="text-sm text-amber-800 dark:text-amber-300">
++                                Ensure your bank details are accurate. We use SEPA transfers for payouts. 
++                                Your account must be capable of receiving EUR.
++                            </p>
++                        </div>
++                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
++                            <div className="md:col-span-2">
++                                <label htmlFor="bankAccountHolder" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bank Account Holder Name</label>
++                                <input type="text" name="bankAccountHolder" id="bankAccountHolder" defaultValue={user.bankAccountHolder || ''} placeholder="Company Name or Sole Trader Name" className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-terracotta focus:ring-terracotta sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
++                            </div>
++                            <div>
++                                <label htmlFor="iban" className="block text-sm font-medium text-gray-700 dark:text-gray-300">IBAN</label>
++                                <input type="text" name="iban" id="iban" defaultValue={user.iban || ''} placeholder="NL91 ABNA 0..." className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-terracotta focus:ring-terracotta sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
++                            </div>
++                            <div>
++                                <label htmlFor="bic" className="block text-sm font-medium text-gray-700 dark:text-gray-300">BIC / SWIFT</label>
++                                <input type="text" name="bic" id="bic" defaultValue={user.bic || ''} placeholder="ABNANL2A" className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-terracotta focus:ring-terracotta sm:text-sm bg-white dark:bg-stone-950 dark:text-white p-2 border" />
++                            </div>
++                        </div>
++                    </div>
++                </section>
 
                 <div className="flex justify-end pt-4">
                     <SubmitButton className="w-full md:w-auto px-12 py-3 text-base font-bold">
