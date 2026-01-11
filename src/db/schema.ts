@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, jsonb, integer, boolean, doublePrecision } from 'drizzle-orm/pg-core';
+import { pgTable, text, serial, timestamp, jsonb, integer, boolean, doublePrecision, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
@@ -93,22 +93,37 @@ export const productOverrides = pgTable('product_overrides', {
 
 export const shippingMatrices = pgTable('shipping_matrices', {
     id: serial('id').primaryKey(),
-    userId: integer('user_id').references(() => users.id).notNull(),
-    // Zone 1: Domestic (e.g., NL to NL)
-    zone1Small: doublePrecision('zone1_small').default(4.95),
-    zone1Standard: doublePrecision('zone1_standard').default(6.95),
-    zone1Heavy: doublePrecision('zone1_heavy').default(12.95),
-    // Zone 2: Near EU (e.g., NL to BE/DE)
-    zone2Small: doublePrecision('zone2_small').default(8.95),
-    zone2Standard: doublePrecision('zone2_standard').default(12.95),
-    zone2Heavy: doublePrecision('zone2_heavy').default(24.95),
-    // Zone 3: Far EU (e.g., NL to IT/ES)
-    zone3Small: doublePrecision('zone3_small').default(12.95),
-    zone3Standard: doublePrecision('zone3_standard').default(18.95),
-    zone3Heavy: doublePrecision('zone3_heavy').default(34.95),
-    // Zone 4: Remote EU (e.g., NL to CY/MT)
-    zone4Small: doublePrecision('zone4_small').default(19.95),
-    zone4Standard: doublePrecision('zone4_standard').default(29.95),
-    zone4Heavy: doublePrecision('zone4_heavy').default(49.95),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    zone1Small: integer('zone1_small').default(0),
+    zone1Standard: integer('zone1_standard').default(0),
+    zone1Heavy: integer('zone1_heavy').default(0),
+    zone2Small: integer('zone2_small').default(0),
+    zone2Standard: integer('zone2_standard').default(0),
+    zone2Heavy: integer('zone2_heavy').default(0),
+    zone3Small: integer('zone3_small').default(0),
+    zone3Standard: integer('zone3_standard').default(0),
+    zone3Heavy: integer('zone3_heavy').default(0),
+    zone4Small: integer('zone4_small').default(0),
+    zone4Standard: integer('zone4_standard').default(0),
+    zone4Heavy: integer('zone4_heavy').default(0),
+    createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const vendorCountryZones = pgTable('vendor_country_zones', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    countryCode: varchar('country_code', { length: 2 }).notNull(),
+    zoneNumber: integer('zone_number').notNull(), // 1, 2, 3, 4
+    isCustom: boolean('is_custom').default(false),
+    createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const vendorCountryRates = pgTable('vendor_country_rates', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    countryCode: varchar('country_code', { length: 2 }).notNull(),
+    tier: varchar('tier', { length: 20 }).notNull(), // small, standard, heavy
+    price: integer('price').notNull(), // in cents
+    createdAt: timestamp('created_at').defaultNow(),
 });
