@@ -28,6 +28,11 @@ export const users = pgTable('users', {
     twoFactorEnabled: boolean('two_factor_enabled').default(false).notNull(),
     resetToken: text('reset_token'),
     resetTokenExpiry: timestamp('reset_token_expiry'),
+    // Bank Details for Payouts
+    iban: text('iban'),
+    bic: text('bic'),
+    bankAccountHolder: text('bank_account_holder'),
+    stripeConnectAccountId: text('stripe_connect_account_id'),
     createdAt: timestamp('created_at').defaultNow(),
 });
 
@@ -83,5 +88,27 @@ export const productOverrides = pgTable('product_overrides', {
     id: serial('id').primaryKey(),
     productId: text('product_id').notNull().unique(), // Saleor Product ID
     shippingCountries: jsonb('shipping_countries').notNull(), // Array of country codes
+    updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const shippingMatrices = pgTable('shipping_matrices', {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id').references(() => users.id).notNull(),
+    // Zone 1: Domestic (e.g., NL to NL)
+    zone1Small: doublePrecision('zone1_small').default(4.95),
+    zone1Standard: doublePrecision('zone1_standard').default(6.95),
+    zone1Heavy: doublePrecision('zone1_heavy').default(12.95),
+    // Zone 2: Near EU (e.g., NL to BE/DE)
+    zone2Small: doublePrecision('zone2_small').default(8.95),
+    zone2Standard: doublePrecision('zone2_standard').default(12.95),
+    zone2Heavy: doublePrecision('zone2_heavy').default(24.95),
+    // Zone 3: Far EU (e.g., NL to IT/ES)
+    zone3Small: doublePrecision('zone3_small').default(12.95),
+    zone3Standard: doublePrecision('zone3_standard').default(18.95),
+    zone3Heavy: doublePrecision('zone3_heavy').default(34.95),
+    // Zone 4: Remote EU (e.g., NL to CY/MT)
+    zone4Small: doublePrecision('zone4_small').default(19.95),
+    zone4Standard: doublePrecision('zone4_standard').default(29.95),
+    zone4Heavy: doublePrecision('zone4_heavy').default(49.95),
     updatedAt: timestamp('updated_at').defaultNow(),
 });
